@@ -5,8 +5,33 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ReverseKinematic"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Name="MainWindow1" WindowState="Maximized" SizeChanged="MainWindow_OnSizeChanged">
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <!--<RowDefinition Height="3*"/>-->
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!--<Viewbox Grid.Column="0" Grid.Row="0" Stretch="Uniform">
+            --><!--<Canvas Background="Aqua" Name="MainCanvas" Width="200" Height="100"/>--><!--
+
+       </Viewbox>-->
+        <Label Grid.Column="1" Grid.Row="0" Content="Grid column1 row0"></Label>
+
+        <DockPanel Grid.Column="0" Grid.Row="0" >
+            <Viewbox Name="MainViewbox" Stretch="Uniform"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <Canvas Name="MainCanvas" Background="Bisque" Width="1000" Height="1000" MouseDown="MainCanvas_OnMouseDown" MouseUp="MainCanvas_OnMouseUp" MouseMove="MainCanvas_OnMouseMove">
+                    <!--<Line X1="5" Y1="5" X2="195" Y2="95"
+                          Stroke="Black"/>
+                    <Label Canvas.Left="80" Canvas.Top="5" Content="Howdy"/>
+                    <Ellipse Height="30" Width="50" Stroke="Blue" StrokeThickness="2"
+                             Canvas.Left="140" Canvas.Top="5"/>-->
+                </Canvas>
+            </Viewbox>
+        </DockPanel>
     </Grid>
 </Window>
