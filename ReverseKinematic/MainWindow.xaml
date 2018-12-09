@@ -5,33 +5,136 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ReverseKinematic"
         mc:Ignorable="d"
-        Title="MainWindow" Name="MainWindow1" WindowState="Maximized" SizeChanged="MainWindow_OnSizeChanged">
-    <Grid>
+        Title="MainWindow" Name="MainWindow1" WindowState="Maximized" SizeChanged="MainWindow_OnSizeChanged" >
+
+    <Window.Resources>
+        <local:BaseConverter x:Key="BaseConverter"/>
+    </Window.Resources>
+    <!--<Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="4*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <!--<RowDefinition Height="3*"/>-->
+    
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!--<Viewbox Grid.Column="0" Grid.Row="0" Stretch="Uniform">
-            --><!--<Canvas Background="Aqua" Name="MainCanvas" Width="200" Height="100"/>--><!--
-
-       </Viewbox>-->
         <Label Grid.Column="1" Grid.Row="0" Content="Grid column1 row0"></Label>
-
         <DockPanel Grid.Column="0" Grid.Row="0" >
             <Viewbox Name="MainViewbox" Stretch="Uniform"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <Canvas Name="MainCanvas" Background="Bisque" Width="1000" Height="1000" MouseDown="MainCanvas_OnMouseDown" MouseUp="MainCanvas_OnMouseUp" MouseMove="MainCanvas_OnMouseMove">
-                    <!--<Line X1="5" Y1="5" X2="195" Y2="95"
-                          Stroke="Black"/>
-                    <Label Canvas.Left="80" Canvas.Top="5" Content="Howdy"/>
-                    <Ellipse Height="30" Width="50" Stroke="Blue" StrokeThickness="2"
-                             Canvas.Left="140" Canvas.Top="5"/>-->
                 </Canvas>
             </Viewbox>
         </DockPanel>
+    </Grid>-->
+
+
+    <Grid Name="MainGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="9*"/>
+            <ColumnDefinition Width="7*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid  Grid.Column="1" Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Button Grid.Row="0"  Content="Calculate" Name="StopSimulation" Click="Calculate"></Button>
+            <Label Grid.Row="1" Content="L0:"></Label>
+            <TextBox Grid.Row="1" Grid.Column="1" Name="L0" Text="{Binding Scene.Robot.L0}"></TextBox>           
+            
+            <Label Grid.Row="2" Content="L1:"></Label>
+            <TextBox Grid.Row="2" Grid.Column="1" Name="L1" Text="{Binding Scene.Robot.L1}"></TextBox>
+
+            <!--<Canvas  Grid.Row="3" Grid.ColumnSpan="10" Name="ConfigurationSpaceCanvas" Width="360" Height="360" Background="AliceBlue"></Canvas>-->
+            <ItemsControl Grid.Row="3" Grid.ColumnSpan="10" ItemsSource="{Binding Scene.ConfigurationSpace}" >
+                <ItemsControl.ItemContainerStyle >
+                    <Style TargetType="ContentPresenter">
+
+                        <Setter Property="Canvas.Left" Value ="{Binding From.X}"/>
+                        <Setter Property="Canvas.Top" Value ="{Binding From.Y}"/>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+                <ItemsControl.ItemsPanel >
+                    <ItemsPanelTemplate>
+
+                        <Canvas Name="ConfigurationSpaceCanvas"  Width="360" Height="360" Background="AliceBlue" MouseLeftButtonDown="MainCanvas_OnMouseDown" MouseLeftButtonUp="MainCanvas_OnMouseUp" MouseMove="MainCanvas_OnMouseMove" MouseRightButtonUp="MainCanvas_OnMouseRightButtonUp">
+
+                        </Canvas >
+
+
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Rectangle Width="{Binding Size.X}" Height="{Binding Size.Y}"  Fill="{Binding Color}"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Grid>
+
+        <DockPanel Grid.Column="0" Grid.Row="0" >
+
+
+
+            <Viewbox Name="MainViewbox" Stretch="Uniform"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+                <Grid>
+                <ItemsControl ItemsSource="{Binding Scene.ObstaclesCollection}" >
+                    <ItemsControl.ItemContainerStyle >
+                        <Style TargetType="ContentPresenter">
+
+                            <Setter Property="Canvas.Left" Value ="{Binding From.X}"/>
+                            <Setter Property="Canvas.Top" Value ="{Binding From.Y}"/>
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                    <ItemsControl.ItemsPanel >
+                        <ItemsPanelTemplate>
+
+                            <Canvas Name="MainCanvas"  Width="1000" Height="1000" Background="AliceBlue" MouseLeftButtonDown="MainCanvas_OnMouseDown" MouseLeftButtonUp="MainCanvas_OnMouseUp" MouseMove="MainCanvas_OnMouseMove" MouseRightButtonUp="MainCanvas_OnMouseRightButtonUp">
+
+                            </Canvas >
+
+
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                                <Rectangle Width="{Binding Size.X}" Height="{Binding Size.Y}" Fill="{Binding Color}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                    <Canvas Name="RobotCanvas" Width="1000" Height="1000"  MouseDown="MainCanvas_OnMouseDown" MouseUp="MainCanvas_OnMouseUp" MouseMove="MainCanvas_OnMouseMove">
+                        <Line X1="{Binding Scene.Robot.Point0.X}" Y1="{Binding Scene.Robot.Point0.Y}" X2="{Binding Scene.Robot.Point1.X}" Y2="{Binding Scene.Robot.Point1.Y}" Stroke="Black" StrokeThickness="5"></Line>
+                        <Line X1="{Binding Scene.Robot.Point1.X}" Y1="{Binding Scene.Robot.Point1.Y}" X2="{Binding Scene.Robot.Point2.X}" Y2="{Binding Scene.Robot.Point2.Y}" Stroke="Black" StrokeThickness="5"></Line>
+                        <Ellipse Name ="TargetEllipse"  Fill="DodgerBlue" Width="30" Height="30" Canvas.Left="{Binding Scene.Target.X, Converter={StaticResource BaseConverter}}"  Canvas.Top="{Binding Scene.Target.Y, Converter={StaticResource BaseConverter}}" Visibility="Hidden"></Ellipse>
+
+                    </Canvas >
+                </Grid>
+            </Viewbox>
+
+            <!--<Viewbox  Name="RobotViewBox" Stretch="Uniform"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >-->
+
+            <!--</Viewbox>-->
+
+
+        </DockPanel>
+
     </Grid>
+
+
+
 </Window>
