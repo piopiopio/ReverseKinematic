@@ -88,7 +88,11 @@ namespace ReverseKinematic
         {
             get
             {
-                return CenterPoint + new Vector(L0 * Math.Cos(_alpha0), L0 * Math.Sin(_alpha0));
+                //return CenterPoint + new Vector(L0 * Math.Cos(_alpha0), L0 * Math.Sin(_alpha0));
+                var joint = new Point(CenterPoint.X + (L0 * Math.Cos(Alpha0)), CenterPoint.Y + (L0 * Math.Sin(Alpha0)));
+              
+
+                return joint;
             }
         }
 
@@ -96,7 +100,11 @@ namespace ReverseKinematic
         {
             get
             {
-                return (CenterPoint + new Vector(L0 * Math.Cos(_alpha0), L0 * Math.Sin(_alpha0)) + new Vector(L1 * Math.Cos(_alpha0 + _alpha1), L1 * Math.Sin(_alpha0 + _alpha1)));
+                // return (CenterPoint + new Vector(L0 * Math.Cos(_alpha0), L0 * Math.Sin(_alpha0)) + new Vector(L1 * Math.Cos(_alpha0 + _alpha1), L1 * Math.Sin(_alpha0 + _alpha1)));
+                var joint = new Point(CenterPoint.X + (L0 * Math.Cos(Alpha0)), CenterPoint.Y + (L0 * Math.Sin(Alpha0)));
+                var end = new Point(joint.X + (L1 * (((Math.Cos(Alpha1) * Math.Cos(Alpha0))) + (Math.Sin(Alpha1) * Math.Sin(Alpha0)))),
+                    joint.Y + (L1 * (-(Math.Sin(Alpha1) * Math.Cos(Alpha0)) + (Math.Cos(Alpha1) * Math.Sin(Alpha0)))));
+                return end;
             }
 
         }

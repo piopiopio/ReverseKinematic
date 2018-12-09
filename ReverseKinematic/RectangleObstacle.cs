@@ -17,8 +17,21 @@ namespace ReverseKinematic
             Color= new SolidColorBrush(System.Windows.Media.Colors.Indigo);
         }
 
+        public void MoveObstacle(Point delta)
+        {
+            From=new Point(_from.X+delta.X, _from.Y+delta.Y);
+        }
         private bool _selected = false;
 
+        public bool Selected
+        {
+            get { return _selected; }
+            set
+            {
+                _selected = value;
+
+            }
+        }
         public void Select(Point p)
         {
             if (p.X > _from.X && p.X < (_from.X + _size.X) && p.Y > _from.Y && p.Y < (_from.Y + _size.Y))
@@ -93,16 +106,27 @@ namespace ReverseKinematic
         {
 
 
-            bool left = lineLine(x1, y1, x2, y2, _from.X, _from.Y, _from.X, _from.Y + _size.Y);
-            bool right = lineLine(x1, y1, x2, y2, _from.X + _size.X, _from.Y, _from.X + _size.X, _from.Y + _size.Y);
-            bool top = lineLine(x1, y1, x2, y2, _from.X, _from.Y, _from.X + _size.X, _from.Y);
-            bool bottom = lineLine(x1, y1, x2, y2, _from.X, _from.Y + _size.Y, _from.X + _size.X, _from.Y + _size.Y);
+            //bool left = lineLine(x1, y1, x2, y2, _from.X, _from.Y, _from.X, _from.Y + _size.Y);
+            //bool right = lineLine(x1, y1, x2, y2, _from.X + _size.X, _from.Y, _from.X + _size.X, _from.Y + _size.Y);
+            //bool top = lineLine(x1, y1, x2, y2, _from.X, _from.Y, _from.X + _size.X, _from.Y);
+            //bool bottom = lineLine(x1, y1, x2, y2, _from.X, _from.Y + _size.Y, _from.X + _size.X, _from.Y + _size.Y);
 
-
-            if (left || right || top || bottom)
+            if (pointRectangle(x1, y1, _from.X, _from.Y, _from.X + _size.X, _from.Y + _size.Y))
             {
                 return true;
             }
+
+            if (pointRectangle(x2, y2, _from.X, _from.Y, _from.X + _size.X, _from.Y + _size.Y))
+            {
+                return true;
+            }
+            if (lineLine(x1, y1, x2, y2, _from.X, _from.Y, _from.X, _from.Y + _size.Y)) return true;
+            if (lineLine(x1, y1, x2, y2, _from.X + _size.X, _from.Y, _from.X + _size.X, _from.Y + _size.Y)) return true; ;
+            if (lineLine(x1, y1, x2, y2, _from.X, _from.Y, _from.X + _size.X, _from.Y)) return true; ;
+            if (lineLine(x1, y1, x2, y2, _from.X, _from.Y + _size.Y, _from.X + _size.X, _from.Y + _size.Y)) return true; ;
+
+
+
             return false;
         }
 
@@ -118,6 +142,17 @@ namespace ReverseKinematic
             {
                 return true;
             }
+            return false;
+        }
+
+        bool pointRectangle(double Px, double Py, double x1, double y1, double x2, double y2)
+        {
+            //(x1,y1) up, left corner and (x2,y2) down, right corner .
+            if ( (Px >= x1) && (Px <= x2) && (Py >=y1) && (Py<=y2) )
+            {
+                return true;
+            }
+
             return false;
         }
     }

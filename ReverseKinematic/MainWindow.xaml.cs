@@ -22,12 +22,13 @@ namespace ReverseKinematic
     public partial class MainWindow : Window
     {
         private Point position = new Point();
-        private MainViewModel _mainViewModel=new MainViewModel();
+        private Point moveVector = new Point();
+        private MainViewModel _mainViewModel = new MainViewModel();
         RectangleObstacle tempRectangle = new RectangleObstacle();
         public MainWindow()
         {
             InitializeComponent();
-   
+
             DataContext = _mainViewModel;
             var line = new Line();
             line.Stroke = Brushes.Black;
@@ -41,58 +42,91 @@ namespace ReverseKinematic
 
         }
 
-        
-    
+
+
         private void MainWindow_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             //TODO: Zrobić automatyczne skalowanie.
-           // MainWindow1.Width = MainWindow1.Height * 16 / 9-23;
-            MainWindow1.Height = MainWindow1.Width * 9 / 16+23;
+            // MainWindow1.Width = MainWindow1.Height * 16 / 9-23;
+            MainWindow1.Height = MainWindow1.Width * 9 / 16 + 23;
 
 
 
 
         }
 
-        private void MainCanvas_OnMouseDown(object sender, MouseButtonEventArgs e)
+        private void MainCanvas_OnLeftMouseDown(object sender, MouseButtonEventArgs e)
         {
-            _mainViewModel.Scene.ObstaclesCollection.Remove(tempRectangle);
-            position = rescalePoint(e.GetPosition(this));
-            ////tempRectangle.Fill=new SolidColorBrush(System.Windows.Media.Colors.Black);  
-            ////Canvas.SetTop(tempRectangle, position.Y);
-            ////Canvas.SetLeft(tempRectangle, position.X);
-            tempRectangle.From=new Point(position.X, position.Y);
-            tempRectangle.Size = new Point(0,0);           
-            _mainViewModel.Scene.ObstaclesCollection.Add(tempRectangle);  
-          
+
+
+            if (Keyboard.IsKeyDown(Key.LeftCtrl))
+            {
+                _mainViewModel.Scene.SelectObstacle(rescalePoint(e.GetPosition(this)));
+                moveVector = rescalePoint(e.GetPosition(this));
+            }
+            else
+            {
+                position = rescalePoint(e.GetPosition(this));
+                _mainViewModel.Scene.ObstaclesCollection.Remove(tempRectangle);
+
+                ////tempRectangle.Fill=new SolidColorBrush(System.Windows.Media.Colors.Black);  
+                ////Canvas.SetTop(tempRectangle, position.Y);
+                ////Canvas.SetLeft(tempRectangle, position.X);
+                tempRectangle.From = new Point(position.X, position.Y);
+                tempRectangle.Size = new Point(0, 0);
+                _mainViewModel.Scene.ObstaclesCollection.Add(tempRectangle);
+            }
+
         }
 
-        private void MainCanvas_OnMouseUp(object sender, MouseButtonEventArgs e)
+        private void MainCanvas_OnLeftMouseUp(object sender, MouseButtonEventArgs e)
         {
-            _mainViewModel.Scene.ObstaclesCollection.Add(tempRectangle.Clone());
-            _mainViewModel.Scene.ObstaclesCollection.Remove(tempRectangle);
+            if (Keyboard.IsKeyDown(Key.LeftCtrl))
+            {
+                //  _mainViewModel.Scene.SelectObstacle(rescalePoint(e.GetPosition(this)));
+            }
+            else
+            {
+                _mainViewModel.Scene.ObstaclesCollection.Add(tempRectangle.Clone());
+                _mainViewModel.Scene.ObstaclesCollection.Remove(tempRectangle);
+            }
         }
+
 
         private void MainCanvas_OnMouseMove(object sender, MouseEventArgs e)
         {
-            var newPosition = rescalePoint(e.GetPosition(this));
-            var Width = newPosition.X - position.X;
-            var Height = newPosition.Y - position.Y;
-            if (Width<0) tempRectangle.From=new Point(newPosition.X, tempRectangle.From.Y);
-            if (Height<0) tempRectangle.From=new Point(tempRectangle.From.X, newPosition.Y);
-            tempRectangle.Size=new Point(Math.Abs(Width), Math.Abs(Height));
+            var currentPosition = rescalePoint(e.GetPosition(this));
+
+            if (Keyboard.IsKeyDown(Key.LeftCtrl))
+            {
+
+
+                _mainViewModel.Scene.MoveSelectedObstacles(new Point(-moveVector.X + currentPosition.X, -moveVector.Y + currentPosition.Y));
+
+            }
+            else
+            {
+
+                var newPosition = rescalePoint(e.GetPosition(this));
+                var Width = newPosition.X - position.X;
+                var Height = newPosition.Y - position.Y;
+                if (Width < 0) tempRectangle.From = new Point(newPosition.X, tempRectangle.From.Y);
+                if (Height < 0) tempRectangle.From = new Point(tempRectangle.From.X, newPosition.Y);
+                tempRectangle.Size = new Point(Math.Abs(Width), Math.Abs(Height));
+            }
+            moveVector = currentPosition;
         }
 
         public Point rescalePoint(Point p1)
         {
-           // Convert from canvas scale to backend scale
+            // Convert from canvas scale to backend scale
             //var a = MainCanvas.Width;
             double a = 1000;
             var b = MainViewbox.ActualWidth;
             var scale = b / a;
-           // return p1;
+            // return p1;
             return new Point(p1.X / scale, p1.Y / scale);
-            
+
         }
 
 
@@ -100,7 +134,7 @@ namespace ReverseKinematic
         {
             TargetEllipse.Visibility = Visibility.Visible;
             _mainViewModel.Scene.Target = rescalePoint(e.GetPosition(this));
-            _mainViewModel.Scene.SelectObstacle(rescalePoint(e.GetPosition(this)));
+
 
         }
 
@@ -108,6 +142,19 @@ namespace ReverseKinematic
         private void Calculate(object sender, RoutedEventArgs e)
         {
             _mainViewModel.Scene.GeneratePath();
+        }
+
+        private void ClearScene(object sender, RoutedEventArgs e)
+        {
+            _mainViewModel.Scene.ObstaclesCollection.Clear();
+        }
+
+        private void OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete)
+            {
+                _mainViewModel.Scene.RemoveSelectedObstacles();
+            }
         }
     }
 }

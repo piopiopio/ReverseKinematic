@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ReverseKinematic"
         mc:Ignorable="d"
-        Title="MainWindow" Name="MainWindow1" WindowState="Maximized" SizeChanged="MainWindow_OnSizeChanged" >
+        Title="MainWindow" Name="MainWindow1" WindowState="Maximized" SizeChanged="MainWindow_OnSizeChanged"  KeyDown="OnKeyDown" MinWidth="900">
 
     <Window.Resources>
         <local:BaseConverter x:Key="BaseConverter"/>
@@ -50,16 +50,21 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Button Grid.Row="0"  Content="Calculate" Name="StopSimulation" Click="Calculate"></Button>
+            <Button Grid.Row="0" Grid.Column="1"  Content="Clear scene" Name="ClearSceneButton" Click="ClearScene"></Button>
             <Label Grid.Row="1" Content="L0:"></Label>
             <TextBox Grid.Row="1" Grid.Column="1" Name="L0" Text="{Binding Scene.Robot.L0}"></TextBox>           
             
             <Label Grid.Row="2" Content="L1:"></Label>
             <TextBox Grid.Row="2" Grid.Column="1" Name="L1" Text="{Binding Scene.Robot.L1}"></TextBox>
 
-            <!--<Canvas  Grid.Row="3" Grid.ColumnSpan="10" Name="ConfigurationSpaceCanvas" Width="360" Height="360" Background="AliceBlue"></Canvas>-->
-            <ItemsControl Grid.Row="3" Grid.ColumnSpan="10" ItemsSource="{Binding Scene.ConfigurationSpace}" >
+            <Label Grid.Row="3" Grid.Column="0" Content="Show alternative solution:"></Label>
+            <CheckBox Grid.Row="3" Grid.Column="1" IsChecked="{Binding Scene.AlternativeSolution}"></CheckBox>
+
+            <Image  Grid.Row="4" Grid.ColumnSpan="10" Name="ConfigurationSpaceCanvas" Width="360" Height="360" Source="{Binding Scene.ConfigurationSpaceBitmap}"></Image>
+            <!--<ItemsControl Grid.Row="3" Grid.ColumnSpan="10" ItemsSource="{Binding Scene.ConfigurationSpace}" >
                 <ItemsControl.ItemContainerStyle >
                     <Style TargetType="ContentPresenter">
 
@@ -83,7 +88,7 @@
                         <Rectangle Width="{Binding Size.X}" Height="{Binding Size.Y}"  Fill="{Binding Color}"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
-            </ItemsControl>
+            </ItemsControl>-->
         </Grid>
 
         <DockPanel Grid.Column="0" Grid.Row="0" >
@@ -103,7 +108,7 @@
                     <ItemsControl.ItemsPanel >
                         <ItemsPanelTemplate>
 
-                            <Canvas Name="MainCanvas"  Width="1000" Height="1000" Background="AliceBlue" MouseLeftButtonDown="MainCanvas_OnMouseDown" MouseLeftButtonUp="MainCanvas_OnMouseUp" MouseMove="MainCanvas_OnMouseMove" MouseRightButtonUp="MainCanvas_OnMouseRightButtonUp">
+                            <Canvas Name="MainCanvas"  Width="1000" Height="1000" Background="AliceBlue" MouseLeftButtonDown="MainCanvas_OnLeftMouseDown" MouseLeftButtonUp="MainCanvas_OnLeftMouseUp" MouseMove="MainCanvas_OnMouseMove" MouseRightButtonUp="MainCanvas_OnMouseRightButtonUp">
 
                             </Canvas >
 
@@ -117,10 +122,11 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                    <Canvas Name="RobotCanvas" Width="1000" Height="1000"  MouseDown="MainCanvas_OnMouseDown" MouseUp="MainCanvas_OnMouseUp" MouseMove="MainCanvas_OnMouseMove">
+                    <Canvas Name="RobotCanvas" Width="1000" Height="1000"  MouseDown="MainCanvas_OnLeftMouseDown" MouseUp="MainCanvas_OnLeftMouseUp" MouseMove="MainCanvas_OnMouseMove">
                         <Line X1="{Binding Scene.Robot.Point0.X}" Y1="{Binding Scene.Robot.Point0.Y}" X2="{Binding Scene.Robot.Point1.X}" Y2="{Binding Scene.Robot.Point1.Y}" Stroke="Black" StrokeThickness="5"></Line>
                         <Line X1="{Binding Scene.Robot.Point1.X}" Y1="{Binding Scene.Robot.Point1.Y}" X2="{Binding Scene.Robot.Point2.X}" Y2="{Binding Scene.Robot.Point2.Y}" Stroke="Black" StrokeThickness="5"></Line>
-                        <Ellipse Name ="TargetEllipse"  Fill="DodgerBlue" Width="30" Height="30" Canvas.Left="{Binding Scene.Target.X, Converter={StaticResource BaseConverter}}"  Canvas.Top="{Binding Scene.Target.Y, Converter={StaticResource BaseConverter}}" Visibility="Hidden"></Ellipse>
+
+                        <Ellipse Name ="TargetEllipse"  Fill="DodgerBlue" Width="30" Height="30" Canvas.Left="{Binding Scene.Target.X, Converter={StaticResource BaseConverter}}"  Canvas.Top="{Binding Scene.Target.Y, Converter={StaticResource BaseConverter}}" ></Ellipse>
 
                     </Canvas >
                 </Grid>
