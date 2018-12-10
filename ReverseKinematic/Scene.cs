@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Xaml;
 using Image = System.Windows.Controls.Image;
 using Point = System.Windows.Point;
 
@@ -33,11 +34,11 @@ namespace ReverseKinematic
             {
                 if (AlternativeSolution)
                 {
-                    return _robot1;
+                    return _robot2;
                 }
                 else
                 {
-                    return _robot2;
+                    return _robot1;
                 }
             }
             set
@@ -54,7 +55,32 @@ namespace ReverseKinematic
             set
             {
                 _target = value;
+                CalculateArmAnglesForPosition(_target);
+
+                var tempAngles = CalculateArmAnglesForPosition(_target);
+
+                if (double.IsNaN(tempAngles[0]) || double.IsNaN(tempAngles[1]))
+                {
+                    MessageBox.Show("Config 1-> error");
+                }
+                else
+                {
+                    _robot1.Alpha0 = tempAngles[0];
+                    _robot1.Alpha1 = tempAngles[1];
+                }
+
+                if (double.IsNaN(tempAngles[2]) || double.IsNaN(tempAngles[3]))
+                {
+                    MessageBox.Show("Config 2-> error");
+                }
+                else
+                {
+                    _robot2.Alpha0 = tempAngles[2];
+                    _robot2.Alpha1 = tempAngles[3];
+                    OnPropertyChanged(nameof(Robot));
+                }
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(Robot));
             }
         }
 
@@ -159,7 +185,17 @@ namespace ReverseKinematic
                 }
             }
 
-            arrayFloodFill(ConfigurationSpaceArray, 180, 180);
+            int a0 = (int) (Robot.Alpha0*180/Math.PI);
+            if (a0 < 0)
+            {
+                a0 = (int)((2 * Math.PI + Robot.Alpha0) * 180 / Math.PI);
+            }
+            int a1 = (int)(Robot.Alpha1 * 180 / Math.PI);
+            if (a1 < 0)
+            {
+                a1 = (int)((2 * Math.PI + Robot.Alpha1) * 180 / Math.PI);
+            }
+            arrayFloodFill(ConfigurationSpaceArray, a0, a1);
 
             for (int i = 0; i < 360; i++)
             {
@@ -167,7 +203,7 @@ namespace ReverseKinematic
                 {
                     if (ConfigurationSpaceArray[i, j] != -1)
                     {
-                        bitmapHelper.SetPixel(i, j, 0, (byte)(ConfigurationSpaceArray[i, j] * 255 / 510), 0);
+                        bitmapHelper.SetPixel(i, j, 0, (byte)(ConfigurationSpaceArray[i, j] * 255 / 720), 0);
                     }
                     else
                     {
@@ -182,16 +218,13 @@ namespace ReverseKinematic
         public void GeneratePath()
         {
             GetObstaclesInConfigurationSpace();
-            var tempAngles=CalculateArmAnglesForPosition(_target);
-            _robot1.Alpha0 = tempAngles[0];
-            _robot1.Alpha1 = tempAngles[1];
-            _robot2.Alpha0 = tempAngles[2];
-            _robot2.Alpha1 = tempAngles[3];
-            OnPropertyChanged(nameof(Robot));
+
         }
 
         void arrayFloodFill(int[,] ConfigurationSpaceArray, int positionX, int positionY, int colorToChange = 0)
         {
+
+
             if (ConfigurationSpaceArray[positionX, positionY] != colorToChange)
             {
                 return;
@@ -206,11 +239,10 @@ namespace ReverseKinematic
             {
                 var p = toFill[0];
                 toFill.RemoveAt(0);
-                //ConfigurationSpaceArray[p[0], p[1]] = i;
-                //ConfigurationSpaceArray[p[0], p[1]] = (int)Math.Sqrt((p[0]-positionX)* (p[0] - positionX) + (p[1] - positionY)* (p[1] - positionY));
+               
                 ConfigurationSpaceArray[p[0], p[1]] = p[2];
 
-                //if (getPixelFromLimitedBitmab(Bitmap2, p[0] + 1, p[1], colorToChange) && !toFill.Any(t => (t[0] == (p[0] + 1)) && (t[1] == p[1])))
+               
 
                 if ((p[0] + 1) < ConfigurationSpaceArray.GetLength(0))
                 {
@@ -260,16 +292,27 @@ namespace ReverseKinematic
 
         public double[] CalculateArmAnglesForPosition(Point position)
         {
-          
-            var destination = position - new Point(500,500);
+
+            var destination = position - new Point(500, 500);
             var x = destination.X;
             var y = destination.Y;
             var beta = -Math.Acos((x * x + y * y - Robot.L0 * Robot.L0 - Robot.L1 * Robot.L1) / (2 * Robot.L0 * Robot.L1));
+            //var a = 2 * Robot.L0 * x;
+            //var b = 2 * Robot.L0 * y;
+            //var c = -Robot.L0 * Robot.L0 + Robot.L1 * Robot.L1 + y * y + x * x;
+            //var alpha = 2*Math.Atan((-2 * a + Math.Sqrt((2 * a * 2 * a) - 4 * (c - a) * c))/ (2 * (c - b)))+Math.PI*135/180;
             var alpha = Math.Asin((Robot.L1 * Math.Sin(beta)) / Math.Sqrt(x * x + y * y)) + Math.Atan2(y, x);
             var beta2 = -beta;
-            var alpha2 = -Math.Asin((Robot.L1 * Math.Sin(-beta2)) / Math.Sqrt(x * x + y * y)) + Math.Atan2(y, x);
+            //var alpha2 =2* Math.Atan((-2 * a - Math.Sqrt((2 * a * 2 * a) - 4 * (c - a) * c))/( 2 * (c - b))) + Math.PI * 135 / 180;
+           var alpha2 = -Math.Asin((Robot.L1 * Math.Sin(-beta2)) / Math.Sqrt(x * x + y * y)) + Math.Atan2(y, x);
 
             return new double[4] { alpha, beta, alpha2, beta2 };
         }
+
+        //public double[] CalculateArmAnglesForPosition(Point position)
+        //{
+
+        //}
+
     }
 }

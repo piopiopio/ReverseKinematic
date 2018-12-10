@@ -123,11 +123,12 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
                     <Canvas Name="RobotCanvas" Width="1000" Height="1000"  MouseDown="MainCanvas_OnLeftMouseDown" MouseUp="MainCanvas_OnLeftMouseUp" MouseMove="MainCanvas_OnMouseMove">
+                        <Ellipse Name ="TargetEllipse"  Fill="DodgerBlue" Width="30" Height="30" Canvas.Left="{Binding Scene.Target.X, Converter={StaticResource BaseConverter}}"  Canvas.Top="{Binding Scene.Target.Y, Converter={StaticResource BaseConverter}}" />
+
                         <Line X1="{Binding Scene.Robot.Point0.X}" Y1="{Binding Scene.Robot.Point0.Y}" X2="{Binding Scene.Robot.Point1.X}" Y2="{Binding Scene.Robot.Point1.Y}" Stroke="Black" StrokeThickness="5"></Line>
                         <Line X1="{Binding Scene.Robot.Point1.X}" Y1="{Binding Scene.Robot.Point1.Y}" X2="{Binding Scene.Robot.Point2.X}" Y2="{Binding Scene.Robot.Point2.Y}" Stroke="Black" StrokeThickness="5"></Line>
 
-                        <Ellipse Name ="TargetEllipse"  Fill="DodgerBlue" Width="30" Height="30" Canvas.Left="{Binding Scene.Target.X, Converter={StaticResource BaseConverter}}"  Canvas.Top="{Binding Scene.Target.Y, Converter={StaticResource BaseConverter}}" ></Ellipse>
-
+                      
                     </Canvas >
                 </Grid>
             </Viewbox>
