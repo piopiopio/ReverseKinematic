@@ -37,6 +37,7 @@ namespace ReverseKinematic
             line.X2 = 100;
             line.Y2 = 100;
             line.StrokeThickness = 2;
+         //   this.MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
             // MainCanvas.Children.Add(line);
             //_mainViewModel.Scene.ObstaclesCollection.Add(new RectangleObstacle(500,500,500,500));
 
@@ -47,8 +48,10 @@ namespace ReverseKinematic
         private void MainWindow_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             //TODO: Zrobić automatyczne skalowanie.
-            // MainWindow1.Width = MainWindow1.Height * 16 / 9-23;
-            MainWindow1.Height = MainWindow1.Width * 9 / 16 + 23;
+
+            MainWindow1.Height = MainWindow1.Width * 9 / 16 + 24;
+            //MainWindow1.Height = MainWindow1.Width * 9 / 16-24;
+           
 
 
 
@@ -61,12 +64,12 @@ namespace ReverseKinematic
 
             if (Keyboard.IsKeyDown(Key.LeftCtrl))
             {
-                _mainViewModel.Scene.SelectObstacle(rescalePoint(e.GetPosition(this)));
-                moveVector = rescalePoint(e.GetPosition(this));
+                _mainViewModel.Scene.SelectObstacle(rescalePoint(e.GetPosition(MainViewbox)));
+                moveVector = rescalePoint(e.GetPosition(MainViewbox));
             }
             else
             {
-                position = rescalePoint(e.GetPosition(this));
+                position = rescalePoint(e.GetPosition(MainViewbox));
                 _mainViewModel.Scene.ObstaclesCollection.Remove(tempRectangle);
 
                 ////tempRectangle.Fill=new SolidColorBrush(System.Windows.Media.Colors.Black);  
@@ -95,7 +98,7 @@ namespace ReverseKinematic
 
         private void MainCanvas_OnMouseMove(object sender, MouseEventArgs e)
         {
-            var currentPosition = rescalePoint(e.GetPosition(this));
+            var currentPosition = rescalePoint(e.GetPosition(MainViewbox));
 
             if (Keyboard.IsKeyDown(Key.LeftCtrl))
             {
@@ -107,7 +110,7 @@ namespace ReverseKinematic
             else
             {
 
-                var newPosition = rescalePoint(e.GetPosition(this));
+                var newPosition = rescalePoint(e.GetPosition(MainViewbox));
                 var Width = newPosition.X - position.X;
                 var Height = newPosition.Y - position.Y;
                 if (Width < 0) tempRectangle.From = new Point(newPosition.X, tempRectangle.From.Y);
@@ -136,11 +139,11 @@ namespace ReverseKinematic
             
             if (Keyboard.IsKeyDown(Key.LeftCtrl))
             {
-                _mainViewModel.Scene.StartPosition = rescalePoint(e.GetPosition(this));
+                _mainViewModel.Scene.StartPosition = rescalePoint(e.GetPosition(MainViewbox));
             }
             else
             {
-                _mainViewModel.Scene.EndPosition = rescalePoint(e.GetPosition(this));
+                _mainViewModel.Scene.EndPosition = rescalePoint(e.GetPosition(MainViewbox));
             }
         }
 

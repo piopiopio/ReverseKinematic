@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Media.Media3D;
 
 namespace ReverseKinematic
 {
@@ -30,6 +31,8 @@ namespace ReverseKinematic
             OnPropertyChanged(nameof(Point2));
             OnPropertyChanged(nameof(Point1bis));
             OnPropertyChanged(nameof(Point2bis));
+            OnPropertyChanged(nameof(ExternalBoundaryRadius));
+            OnPropertyChanged(nameof(InternalBoundaryRadius));
         }
         private double _l0 = 0;
         public double L0
@@ -160,5 +163,25 @@ namespace ReverseKinematic
 
         }
 
+
+        public Vector3D ExternalBoundaryRadius
+        {
+            get
+            {
+                double r = (L0 + L1);
+                return new Vector3D(500-r,500-r,2*r);
+            }
+
+        }
+
+        public Vector3D InternalBoundaryRadius
+        {
+            get
+            {
+                double r = Math.Abs(L0 - L1);
+                return new Vector3D(500 - r, 500 - r, 2 * r);
+            }
+
+        }
     }
 }

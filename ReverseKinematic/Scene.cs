@@ -137,6 +137,8 @@ namespace ReverseKinematic
                     _robot1.Alpha1bis = tempAngles[3];
                     OnPropertyChanged(nameof(Robot));
                 }
+
+                CollisionCheck();
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(Robot));
             }
@@ -370,7 +372,7 @@ namespace ReverseKinematic
         public void GenerateConfigurationSpaceMap()
         {
             GetObstaclesInConfigurationSpace();
-
+            CollisionCheck();
         }
 
         void arrayFloodFill(int[,] ConfigurationSpaceArray, int positionX, int positionY, int colorToChange = 0)
@@ -531,6 +533,20 @@ namespace ReverseKinematic
             }
 
 
+            return output;
+        }
+
+        double Length(Point p1, Point p2)
+        {
+            return (new Vector(p2.X, p2.Y) - new Vector(p1.X, p1.Y)).Length;
+        }
+        //public double[] CalculateArmAnglesForPosition(Point position)
+        //{
+
+        //}
+        public void CollisionCheck()
+        {
+
             if (_showFirstPermission)
             {
                 foreach (var item in ObstaclesCollection)
@@ -562,18 +578,7 @@ namespace ReverseKinematic
                     }
                 }
             }
-            return output;
         }
-
-        double Length(Point p1, Point p2)
-        {
-            return (new Vector(p2.X, p2.Y) - new Vector(p1.X, p1.Y)).Length;
-        }
-        //public double[] CalculateArmAnglesForPosition(Point position)
-        //{
-
-        //}
-
         public void RefreshRobots()
         {
             ///OnPropertyChanged(nameof(Robot2));
