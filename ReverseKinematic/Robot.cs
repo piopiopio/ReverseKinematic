@@ -28,6 +28,8 @@ namespace ReverseKinematic
             OnPropertyChanged(nameof(L1));
             OnPropertyChanged(nameof(Point1));
             OnPropertyChanged(nameof(Point2));
+            OnPropertyChanged(nameof(Point1bis));
+            OnPropertyChanged(nameof(Point2bis));
         }
         private double _l0 = 0;
         public double L0
@@ -74,6 +76,30 @@ namespace ReverseKinematic
             }
         }
 
+
+        private double _alpha0bis = 0;
+        public double Alpha0bis
+        {
+            get { return _alpha0bis; }
+            set
+            {
+                _alpha0bis = value;
+                Refresh();
+            }
+        }
+
+        private double _alpha1bis = 0;
+
+        public double Alpha1bis
+        {
+            get { return _alpha1bis; }
+            set
+            {
+                _alpha1bis = value;
+                Refresh();
+            }
+        }
+
         private Point CenterPoint = new Point(500, 500);
 
         public Point Point0
@@ -104,6 +130,31 @@ namespace ReverseKinematic
                 var joint = new Point(CenterPoint.X + (L0 * Math.Cos(Alpha0)), CenterPoint.Y + (L0 * Math.Sin(Alpha0)));
                 var end = new Point(joint.X + (L1 * (((Math.Cos(Alpha1) * Math.Cos(Alpha0))) + (Math.Sin(Alpha1) * Math.Sin(Alpha0)))),
                     joint.Y + (L1 * (-(Math.Sin(Alpha1) * Math.Cos(Alpha0)) + (Math.Cos(Alpha1) * Math.Sin(Alpha0)))));
+                return end;
+            }
+
+        }
+
+        public Point Point1bis
+        {
+            get
+            {
+                //return CenterPoint + new Vector(L0 * Math.Cos(_alpha0), L0 * Math.Sin(_alpha0));
+                var joint = new Point(CenterPoint.X + (L0 * Math.Cos(Alpha0bis)), CenterPoint.Y + (L0 * Math.Sin(Alpha0bis)));
+
+
+                return joint;
+            }
+        }
+
+        public Point Point2bis
+        {
+            get
+            {
+                // return (CenterPoint + new Vector(L0 * Math.Cos(_alpha0), L0 * Math.Sin(_alpha0)) + new Vector(L1 * Math.Cos(_alpha0 + _alpha1), L1 * Math.Sin(_alpha0 + _alpha1)));
+                var joint = new Point(CenterPoint.X + (L0 * Math.Cos(Alpha0bis)), CenterPoint.Y + (L0 * Math.Sin(Alpha0bis)));
+                var end = new Point(joint.X + (L1 * (((Math.Cos(Alpha1bis) * Math.Cos(Alpha0bis))) + (Math.Sin(Alpha1bis) * Math.Sin(Alpha0bis)))),
+                    joint.Y + (L1 * (-(Math.Sin(Alpha1bis) * Math.Cos(Alpha0bis)) + (Math.Cos(Alpha1bis) * Math.Sin(Alpha0bis)))));
                 return end;
             }
 

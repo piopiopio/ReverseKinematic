@@ -3,12 +3,15 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ReverseKinematic"
+        xmlns:local="clr-namespace:ReverseKinematic" 
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="MainWindow" Name="MainWindow1" WindowState="Maximized" SizeChanged="MainWindow_OnSizeChanged"  KeyDown="OnKeyDown" MinWidth="900">
 
     <Window.Resources>
         <local:BaseConverter x:Key="BaseConverter"/>
+        <local:BoolToVisibleOrHidden x:Key="BoolToVisibleOrHidden"/>
+        <system:Double x:Key="IntZero">15</system:Double>
     </Window.Resources>
     <!--<Grid>
         <Grid.ColumnDefinitions>
@@ -51,20 +54,35 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Button Grid.Row="0"  Content="Calculate" Name="StopSimulation" Click="Calculate"></Button>
+
+            <Grid  Grid.Row="0" Grid.ColumnSpan="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Row="0"  Content="Calculate configuration space" Name="StopSimulation" Click="Calculate"></Button>
             <Button Grid.Row="0" Grid.Column="1"  Content="Clear scene" Name="ClearSceneButton" Click="ClearScene"></Button>
-            <Label Grid.Row="1" Content="L0:"></Label>
-            <TextBox Grid.Row="1" Grid.Column="1" Name="L0" Text="{Binding Scene.Robot.L0}"></TextBox>           
-            
-            <Label Grid.Row="2" Content="L1:"></Label>
-            <TextBox Grid.Row="2" Grid.Column="1" Name="L1" Text="{Binding Scene.Robot.L1}"></TextBox>
+            <Button Grid.Row="0" Grid.Column="2"  Content="Staart animation" Name="StartAnimation" Click="ClearScene"></Button>
+            </Grid>
 
-            <Label Grid.Row="3" Grid.Column="0" Content="Show alternative solution:"></Label>
-            <CheckBox Grid.Row="3" Grid.Column="1" IsChecked="{Binding Scene.AlternativeSolution}"></CheckBox>
 
-            <Image  Grid.Row="4" Grid.ColumnSpan="10" Name="ConfigurationSpaceCanvas" Width="360" Height="360" Source="{Binding Scene.ConfigurationSpaceBitmap}"></Image>
-            <!--<ItemsControl Grid.Row="3" Grid.ColumnSpan="10" ItemsSource="{Binding Scene.ConfigurationSpace}" >
+        <Label Grid.Row="1" Content="L0:"></Label>
+        <TextBox Grid.Row="1" Grid.Column="1" Name="L0" Text="{Binding Scene.Robot1.L0}"></TextBox>
+
+        <Label Grid.Row="2" Content="L1:"></Label>
+        <TextBox Grid.Row="2" Grid.Column="1" Name="L1" Text="{Binding Scene.Robot1.L1}"></TextBox>
+
+        <Label Grid.Row="3" Grid.Column="0" Content="Show first:"></Label>
+        <CheckBox Grid.Row="3" Grid.Column="1" IsChecked="{Binding Scene.ShowFirst}"></CheckBox>
+
+        <Label Grid.Row="4" Grid.Column="0" Content="Show second:"></Label>
+        <CheckBox Grid.Row="4" Grid.Column="1" IsChecked="{Binding Scene.ShowSecond}"></CheckBox>
+
+        <Image  Grid.Row="5" Grid.ColumnSpan="10" Name="ConfigurationSpaceCanvas" Width="360" Height="360" Source="{Binding Scene.ConfigurationSpaceBitmap}"></Image>
+        <!--<ItemsControl Grid.Row="3" Grid.ColumnSpan="10" ItemsSource="{Binding Scene.ConfigurationSpace}" >
                 <ItemsControl.ItemContainerStyle >
                     <Style TargetType="ContentPresenter">
 
@@ -89,14 +107,14 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>-->
-        </Grid>
+    </Grid>
 
-        <DockPanel Grid.Column="0" Grid.Row="0" >
+    <DockPanel Grid.Column="0" Grid.Row="0" >
 
 
 
-            <Viewbox Name="MainViewbox" Stretch="Uniform"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
-                <Grid>
+        <Viewbox Name="MainViewbox" Stretch="Uniform"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+            <Grid>
                 <ItemsControl ItemsSource="{Binding Scene.ObstaclesCollection}" >
                     <ItemsControl.ItemContainerStyle >
                         <Style TargetType="ContentPresenter">
@@ -118,27 +136,45 @@
 
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                                <Rectangle Width="{Binding Size.X}" Height="{Binding Size.Y}" Fill="{Binding Color}"/>
+                            <Rectangle Width="{Binding Size.X}" Height="{Binding Size.Y}" Fill="{Binding Color}"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                    <Canvas Name="RobotCanvas" Width="1000" Height="1000"  MouseDown="MainCanvas_OnLeftMouseDown" MouseUp="MainCanvas_OnLeftMouseUp" MouseMove="MainCanvas_OnMouseMove">
-                        <Ellipse Name ="TargetEllipse"  Fill="DodgerBlue" Width="30" Height="30" Canvas.Left="{Binding Scene.Target.X, Converter={StaticResource BaseConverter}}"  Canvas.Top="{Binding Scene.Target.Y, Converter={StaticResource BaseConverter}}" />
+                <!--<Canvas Name="RobotCanvas" Width="1000" Height="1000"  MouseDown="MainCanvas_OnLeftMouseDown" MouseUp="MainCanvas_OnLeftMouseUp" MouseMove="MainCanvas_OnMouseMove">-->
+                <Canvas Name="RobotCanvas" Width="1000" Height="1000">
+                    <Ellipse Name ="TargetEllipse"  Width="30" Height="30"  Canvas.Left="{Binding Scene.EndPosition.X, Converter={StaticResource BaseConverter},
+                                     ConverterParameter={StaticResource IntZero}}"   Canvas.Top="{Binding Scene.EndPosition.Y, Converter={StaticResource BaseConverter},ConverterParameter={StaticResource IntZero}}" >
+                        <Ellipse.Fill>
+                            <ImageBrush ImageSource="Resources/f1.png"></ImageBrush>
+                        </Ellipse.Fill>
+                    </Ellipse>
 
-                        <Line X1="{Binding Scene.Robot.Point0.X}" Y1="{Binding Scene.Robot.Point0.Y}" X2="{Binding Scene.Robot.Point1.X}" Y2="{Binding Scene.Robot.Point1.Y}" Stroke="Black" StrokeThickness="5"></Line>
-                        <Line X1="{Binding Scene.Robot.Point1.X}" Y1="{Binding Scene.Robot.Point1.Y}" X2="{Binding Scene.Robot.Point2.X}" Y2="{Binding Scene.Robot.Point2.Y}" Stroke="Black" StrokeThickness="5"></Line>
+                    <Ellipse Name ="StartEllipse"  Width="30" Height="30" Canvas.Left="{Binding Scene.StartPosition.X, Converter={StaticResource BaseConverter},
+                                     ConverterParameter={StaticResource IntZero}}"   Canvas.Top="{Binding Scene.StartPosition.Y, Converter={StaticResource BaseConverter},ConverterParameter={StaticResource IntZero}}" >
+                        <Ellipse.Fill>
+                            <ImageBrush ImageSource="Resources/start1.jpg"></ImageBrush>
+                        </Ellipse.Fill>
+                    </Ellipse>
 
-                      
-                    </Canvas >
-                </Grid>
-            </Viewbox>
-
-            <!--<Viewbox  Name="RobotViewBox" Stretch="Uniform"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >-->
-
-            <!--</Viewbox>-->
+                    <Line X1="{Binding Scene.Robot1.Point0.X}" Y1="{Binding Scene.Robot1.Point0.Y}" X2="{Binding Scene.Robot1.Point1.X}" Y2="{Binding Scene.Robot1.Point1.Y}" Stroke="Black" StrokeThickness="5" Visibility="{Binding Scene.ShowFirst, Converter={StaticResource BoolToVisibleOrHidden}}"></Line>
+                    <Line X1="{Binding Scene.Robot1.Point1.X}" Y1="{Binding Scene.Robot1.Point1.Y}" X2="{Binding Scene.Robot1.Point2.X}" Y2="{Binding Scene.Robot1.Point2.Y}" Stroke="Black" StrokeThickness="5" Visibility="{Binding Scene.ShowFirst, Converter={StaticResource BoolToVisibleOrHidden}}"></Line>
 
 
-        </DockPanel>
+                    <!--<Line X1="{Binding Scene.Robot2.Point0.X}" Y1="{Binding Scene.Robot2.Point0.Y}" X2="{Binding Scene.Robot2.Point1.X}" Y2="{Binding Scene.Robot2.Point1.Y}" Stroke="Black" StrokeThickness="5"></Line>
+                        <Line X1="{Binding Scene.Robot2.Point1.X}" Y1="{Binding Scene.Robot2.Point1.Y}" X2="{Binding Scene.Robot2.Point2.X}" Y2="{Binding Scene.Robot2.Point2.Y}" Stroke="Black" StrokeThickness="5"></Line>-->
+                    <Line X1="{Binding Scene.Robot1.Point0.X}" Y1="{Binding Scene.Robot1.Point0.Y}" X2="{Binding Scene.Robot1.Point1bis.X}" Y2="{Binding Scene.Robot1.Point1bis.Y}" Stroke="Black" StrokeThickness="5" Visibility="{Binding Scene.ShowSecond, Converter={StaticResource BoolToVisibleOrHidden}}"></Line>
+                    <Line X1="{Binding Scene.Robot1.Point1bis.X}" Y1="{Binding Scene.Robot1.Point1bis.Y}" X2="{Binding Scene.Robot1.Point2bis.X}" Y2="{Binding Scene.Robot1.Point2bis.Y}" Stroke="Black" StrokeThickness="5" Visibility="{Binding Scene.ShowSecond, Converter={StaticResource BoolToVisibleOrHidden}}"></Line>
+
+                </Canvas >
+            </Grid>
+        </Viewbox>
+
+        <!--<Viewbox  Name="RobotViewBox" Stretch="Uniform"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >-->
+
+        <!--</Viewbox>-->
+
+
+    </DockPanel>
 
     </Grid>
 

@@ -82,7 +82,9 @@ namespace ReverseKinematic
             Pixels[y * Stride + x * 4 + 3] = alpha;
             Pixels[y * Stride + x * 4 + 2] = red;
             Pixels[y * Stride + x * 4 + 1] = green;
+            Pixels[y * Stride + x * 4 + 1] = green;
             Pixels[y * Stride + x * 4 + 0] = blue;
+
         }
 
         public WriteableBitmap MakeBitmap(double dpiX, double dpiY)

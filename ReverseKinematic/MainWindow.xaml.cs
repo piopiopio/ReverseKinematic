@@ -132,16 +132,22 @@ namespace ReverseKinematic
 
         private void MainCanvas_OnMouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
-            TargetEllipse.Visibility = Visibility.Visible;
-            _mainViewModel.Scene.Target = rescalePoint(e.GetPosition(this));
 
-
+            
+            if (Keyboard.IsKeyDown(Key.LeftCtrl))
+            {
+                _mainViewModel.Scene.StartPosition = rescalePoint(e.GetPosition(this));
+            }
+            else
+            {
+                _mainViewModel.Scene.EndPosition = rescalePoint(e.GetPosition(this));
+            }
         }
 
 
         private void Calculate(object sender, RoutedEventArgs e)
         {
-            _mainViewModel.Scene.GeneratePath();
+            _mainViewModel.Scene.GenerateConfigurationSpaceMap();
         }
 
         private void ClearScene(object sender, RoutedEventArgs e)
@@ -155,6 +161,14 @@ namespace ReverseKinematic
             {
                 _mainViewModel.Scene.RemoveSelectedObstacles();
             }
+        }
+
+        private void L0_OnLostFocus(object sender, RoutedEventArgs e)
+        {
+
+            //_mainViewModel.Scene.Robot1.L0 = _mainViewModel.Scene.Robot2.L0;
+            //_mainViewModel.Scene.Robot1.L1 = _mainViewModel.Scene.Robot2.L1;
+            _mainViewModel.Scene.RefreshRobots();
         }
     }
 }
