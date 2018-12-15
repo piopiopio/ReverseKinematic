@@ -66,7 +66,7 @@
                 </Grid.ColumnDefinitions>
                 <Button Grid.Row="0"  Content="Calculate configuration space" Name="StopSimulation" Click="Calculate"></Button>
                 <Button Grid.Row="0" Grid.Column="1"  Content="Clear scene" Name="ClearSceneButton" Click="ClearScene"></Button>
-                <Button Grid.Row="0" Grid.Column="2"  Content="Staart animation" Name="StartAnimation" Click="ClearScene"></Button>
+                <Button Grid.Row="0" Grid.Column="2"  Content="Start animation" Name="StartAnimation" Click="StartAnimation_OnClick"></Button>
             </Grid>
 
 
@@ -76,11 +76,31 @@
             <Label Grid.Row="2" Content="L1:"></Label>
             <TextBox Grid.Row="2" Grid.Column="1" Name="L1" Text="{Binding Scene.Robot1.L1}"></TextBox>
 
-            <Label Grid.Row="3" Grid.Column="0" Content="Show first:"></Label>
-            <CheckBox Grid.Row="3" Grid.Column="1" IsChecked="{Binding Scene.ShowFirst}"></CheckBox>
 
-            <Label Grid.Row="4" Grid.Column="0" Content="Show second:"></Label>
-            <CheckBox Grid.Row="4" Grid.Column="1" IsChecked="{Binding Scene.ShowSecond}"></CheckBox>
+            <Grid  Grid.Row="3" Grid.ColumnSpan="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0" Grid.Column="0" Content="Show star first:"></Label>
+                <RadioButton GroupName="Start" Grid.Row="0" Grid.Column="1" IsChecked="{Binding Scene.ShowFirst}"></RadioButton>
+
+                <Label Grid.Row="1" Grid.Column="0" Content="Show start second:"></Label>
+                <RadioButton GroupName="Start" Grid.Row="1" Grid.Column="1" IsChecked="{Binding Scene.ShowSecond}"></RadioButton>
+
+                <Label Grid.Row="0" Grid.Column="2" Content="Show end first:"></Label>
+                <RadioButton GroupName="End" Grid.Row="0" Grid.Column="3" IsChecked="{Binding Scene.ShowFirstEnd}"></RadioButton>
+
+                <Label Grid.Row="1" Grid.Column="2" Content="Show end second:"></Label>
+                <RadioButton GroupName="End" Grid.Row="1" Grid.Column="3" IsChecked="{Binding Scene.ShowSecondEnd}"></RadioButton>
+
+            </Grid>
 
             <Image  Grid.Row="5" Grid.ColumnSpan="10" Name="ConfigurationSpaceCanvas" Width="360" Height="360" Source="{Binding Scene.ConfigurationSpaceBitmap}"></Image>
             <!--<ItemsControl Grid.Row="3" Grid.ColumnSpan="10" ItemsSource="{Binding Scene.ConfigurationSpace}" >
@@ -154,6 +174,12 @@
                         <Line X1="{Binding Scene.Robot1.Point0.X}" Y1="{Binding Scene.Robot1.Point0.Y}" X2="{Binding Scene.Robot1.Point1bis.X}" Y2="{Binding Scene.Robot1.Point1bis.Y}" Stroke="Black" StrokeThickness="5" Visibility="{Binding Scene.ShowSecond, Converter={StaticResource BoolToVisibleOrHidden}}"></Line>
                         <Line X1="{Binding Scene.Robot1.Point1bis.X}" Y1="{Binding Scene.Robot1.Point1bis.Y}" X2="{Binding Scene.Robot1.Point2bis.X}" Y2="{Binding Scene.Robot1.Point2bis.Y}" Stroke="Black" StrokeThickness="5" Visibility="{Binding Scene.ShowSecond, Converter={StaticResource BoolToVisibleOrHidden}}"></Line>
 
+
+                        <Line X1="{Binding Scene.Robot2.Point0.X}" Y1="{Binding Scene.Robot2.Point0.Y}" X2="{Binding Scene.Robot2.Point1.X}" Y2="{Binding Scene.Robot2.Point1.Y}" Stroke="Black" StrokeThickness="5" Visibility="{Binding Scene.ShowFirstEnd, Converter={StaticResource BoolToVisibleOrHidden}}"></Line>
+                        <Line X1="{Binding Scene.Robot2.Point1.X}" Y1="{Binding Scene.Robot2.Point1.Y}" X2="{Binding Scene.Robot2.Point2.X}" Y2="{Binding Scene.Robot2.Point2.Y}" Stroke="Black" StrokeThickness="5" Visibility="{Binding Scene.ShowFirstEnd, Converter={StaticResource BoolToVisibleOrHidden}}"></Line>
+
+                        <Line X1="{Binding Scene.Robot2.Point0.X}" Y1="{Binding Scene.Robot2.Point0.Y}" X2="{Binding Scene.Robot2.Point1bis.X}" Y2="{Binding Scene.Robot2.Point1bis.Y}" Stroke="Black" StrokeThickness="5" Visibility="{Binding Scene.ShowSecondEnd, Converter={StaticResource BoolToVisibleOrHidden}}"></Line>
+                        <Line X1="{Binding Scene.Robot2.Point1bis.X}" Y1="{Binding Scene.Robot2.Point1bis.Y}" X2="{Binding Scene.Robot2.Point2bis.X}" Y2="{Binding Scene.Robot2.Point2bis.Y}" Stroke="Black" StrokeThickness="5" Visibility="{Binding Scene.ShowSecondEnd, Converter={StaticResource BoolToVisibleOrHidden}}"></Line>
                         <!--<Ellipse.Fill>
                             <ImageBrush ImageSource="Resources/start1.jpg"></ImageBrush>
                         </Ellipse.Fill>-->

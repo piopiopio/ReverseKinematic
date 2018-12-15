@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace ReverseKinematic
 {
@@ -37,7 +38,7 @@ namespace ReverseKinematic
             line.X2 = 100;
             line.Y2 = 100;
             line.StrokeThickness = 2;
-         //   this.MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
+            //   this.MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
             // MainCanvas.Children.Add(line);
             //_mainViewModel.Scene.ObstaclesCollection.Add(new RectangleObstacle(500,500,500,500));
 
@@ -51,7 +52,7 @@ namespace ReverseKinematic
 
             MainWindow1.Height = MainWindow1.Width * 9 / 16 + 24;
             //MainWindow1.Height = MainWindow1.Width * 9 / 16-24;
-           
+
 
 
 
@@ -136,7 +137,7 @@ namespace ReverseKinematic
         private void MainCanvas_OnMouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
 
-            
+
             if (Keyboard.IsKeyDown(Key.LeftCtrl))
             {
                 _mainViewModel.Scene.StartPosition = rescalePoint(e.GetPosition(MainViewbox));
@@ -172,6 +173,12 @@ namespace ReverseKinematic
             //_mainViewModel.Scene.Robot1.L0 = _mainViewModel.Scene.Robot2.L0;
             //_mainViewModel.Scene.Robot1.L1 = _mainViewModel.Scene.Robot2.L1;
             _mainViewModel.Scene.RefreshRobots();
+        }
+
+
+        private void StartAnimation_OnClick(object sender, RoutedEventArgs e)
+        {
+            _mainViewModel.Scene.StartSimulation();
         }
     }
 }
