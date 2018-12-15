@@ -57,6 +57,11 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <Grid  Grid.Row="0" Grid.ColumnSpan="10">
@@ -64,18 +69,20 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Button Grid.Row="0"  Content="Calculate configuration space" Name="StopSimulation" Click="Calculate"></Button>
+                <Button Grid.Row="0"  Content="Calculate configuration space" Name="StopSimulation" Click="Calculate" Height="20" VerticalAlignment="Top"></Button>
                 <Button Grid.Row="0" Grid.Column="1"  Content="Clear scene" Name="ClearSceneButton" Click="ClearScene"></Button>
                 <Button Grid.Row="0" Grid.Column="2"  Content="Start animation" Name="StartAnimation" Click="StartAnimation_OnClick"></Button>
+                <Button Grid.Row="0" Grid.Column="3"  Content="Stop animation" Name="StopAnimation" Click="StopAnimation_OnClick" IsEnabled="False"></Button>
             </Grid>
 
 
             <Label Grid.Row="1" Content="L0:"></Label>
-            <TextBox Grid.Row="1" Grid.Column="1" Name="L0" Text="{Binding Scene.Robot1.L0}"></TextBox>
+            <TextBox Grid.Row="1" Grid.Column="1" Name="L0" Text="{Binding Scene.L0}"></TextBox>
 
             <Label Grid.Row="2" Content="L1:"></Label>
-            <TextBox Grid.Row="2" Grid.Column="1" Name="L1" Text="{Binding Scene.Robot1.L1}"></TextBox>
+            <TextBox Grid.Row="2" Grid.Column="1" Name="L1" Text="{Binding Scene.L1}"></TextBox>
 
 
             <Grid  Grid.Row="3" Grid.ColumnSpan="10">
@@ -90,16 +97,16 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <Label Grid.Row="0" Grid.Column="0" Content="Show star first:"></Label>
-                <RadioButton GroupName="Start" Grid.Row="0" Grid.Column="1" IsChecked="{Binding Scene.ShowFirst}"></RadioButton>
+                <RadioButton Name="R1" GroupName="Start" Grid.Row="0" Grid.Column="1" IsChecked="{Binding Scene.ShowFirst}"></RadioButton>
 
                 <Label Grid.Row="1" Grid.Column="0" Content="Show start second:"></Label>
-                <RadioButton GroupName="Start" Grid.Row="1" Grid.Column="1" IsChecked="{Binding Scene.ShowSecond}"></RadioButton>
+                <RadioButton Name="R2" GroupName="Start" Grid.Row="1" Grid.Column="1" IsChecked="{Binding Scene.ShowSecond}"></RadioButton>
 
                 <Label Grid.Row="0" Grid.Column="2" Content="Show end first:"></Label>
-                <RadioButton GroupName="End" Grid.Row="0" Grid.Column="3" IsChecked="{Binding Scene.ShowFirstEnd}"></RadioButton>
+                <RadioButton Name="R3" GroupName="End" Grid.Row="0" Grid.Column="3" IsChecked="{Binding Scene.ShowFirstEnd}"></RadioButton>
 
                 <Label Grid.Row="1" Grid.Column="2" Content="Show end second:"></Label>
-                <RadioButton GroupName="End" Grid.Row="1" Grid.Column="3" IsChecked="{Binding Scene.ShowSecondEnd}"></RadioButton>
+                <RadioButton Name="R4" GroupName="End" Grid.Row="1" Grid.Column="3" IsChecked="{Binding Scene.ShowSecondEnd}"></RadioButton>
 
 
             </Grid>
@@ -124,6 +131,12 @@
                 <Label Grid.Row="1" Grid.ColumnSpan="2" Content="alpha" HorizontalAlignment="Center"></Label>
 
                 </Grid>
+            <Label Grid.Row="7" Content="RMB    --place finish position"></Label>
+            <Label Grid.Row="8" Content="RMB + left CTRL    --place start position"></Label>
+            <Label Grid.Row="9" Content="LMB + Mouse move    --place obstacle"></Label>
+            <Label Grid.Row="10" Content="LMB + left ctrl    --select obstacle"></Label>
+            <Label Grid.Row="11" Content="LMB + left ctrl + Mouse move    --move selected obstacles"></Label>
+
             <!--<ItemsControl Grid.Row="3" Grid.ColumnSpan="10" ItemsSource="{Binding Scene.ConfigurationSpace}" >
                 <ItemsControl.ItemContainerStyle >
                     <Style TargetType="ContentPresenter">
@@ -162,6 +175,18 @@
 
                     <!--<Canvas Name="RobotCanvas" Width="1000" Height="1000"  MouseDown="MainCanvas_OnLeftMouseDown" MouseUp="MainCanvas_OnLeftMouseUp" MouseMove="MainCanvas_OnMouseMove">-->
                     <Canvas Background="AliceBlue" Name="RobotCanvas" Width="1000" Height="1000"  MouseLeftButtonDown="MainCanvas_OnLeftMouseDown" MouseLeftButtonUp="MainCanvas_OnLeftMouseUp" MouseMove="MainCanvas_OnMouseMove" MouseRightButtonUp="MainCanvas_OnMouseRightButtonUp">
+
+
+                        <Ellipse Name ="WorkingAreaExternalBoundary"  Width="{Binding Scene.Robot1.ExternalBoundaryRadius.Z}" Height="{Binding Scene.Robot1.ExternalBoundaryRadius.Z}" Canvas.Left="{Binding Scene.Robot1.ExternalBoundaryRadius.X}"   Canvas.Top="{Binding Scene.Robot1.ExternalBoundaryRadius.Y}" Stroke="Chartreuse" StrokeThickness="3" >
+
+                            <Ellipse.Fill>
+                                <!--//<ImageBrush ImageSource="Resources/start1.jpg"></ImageBrush>-->
+                                <SolidColorBrush Color="Chartreuse" Opacity="0.1"></SolidColorBrush>
+                            </Ellipse.Fill>
+                        </Ellipse>
+
+                        <Ellipse Name ="WorkingAreaInternalBoundary"  Width="{Binding Scene.Robot1.InternalBoundaryRadius.Z}" Height="{Binding Scene.Robot1.InternalBoundaryRadius.Z}" Canvas.Left="{Binding Scene.Robot1.InternalBoundaryRadius.X}"   Canvas.Top="{Binding Scene.Robot1.InternalBoundaryRadius.Y}" Stroke="Chartreuse" StrokeThickness="3" Fill="AliceBlue"/>
+
                         <Ellipse Name ="TargetEllipse"  Width="30" Height="30"  Canvas.Left="{Binding Scene.EndPosition.X, Converter={StaticResource BaseConverter},
                                      ConverterParameter={StaticResource SmallEllipseMoveToCenter}}"   Canvas.Top="{Binding Scene.EndPosition.Y, Converter={StaticResource BaseConverter},ConverterParameter={StaticResource SmallEllipseMoveToCenter}}" >
                             <Ellipse.Fill>
@@ -175,18 +200,6 @@
                                 <ImageBrush ImageSource="Resources/start1.jpg"></ImageBrush>
                             </Ellipse.Fill>
                         </Ellipse>
-
-
-                        <Ellipse Name ="WorkingAreaExternalBoundary"  Width="{Binding Scene.Robot1.ExternalBoundaryRadius.Z}" Height="{Binding Scene.Robot1.ExternalBoundaryRadius.Z}" Canvas.Left="{Binding Scene.Robot1.ExternalBoundaryRadius.X}"   Canvas.Top="{Binding Scene.Robot1.ExternalBoundaryRadius.Y}" Stroke="Chartreuse" StrokeThickness="3" >
-
-                            <Ellipse.Fill>
-                                <!--//<ImageBrush ImageSource="Resources/start1.jpg"></ImageBrush>-->
-                                <SolidColorBrush Color="Chartreuse" Opacity="0.1"></SolidColorBrush>
-                            </Ellipse.Fill>
-                        </Ellipse>
-
-                        <Ellipse Name ="WorkingAreaInternalBoundary"  Width="{Binding Scene.Robot1.InternalBoundaryRadius.Z}" Height="{Binding Scene.Robot1.InternalBoundaryRadius.Z}" Canvas.Left="{Binding Scene.Robot1.InternalBoundaryRadius.X}"   Canvas.Top="{Binding Scene.Robot1.InternalBoundaryRadius.Y}" Stroke="Chartreuse" StrokeThickness="3" Fill="AliceBlue"/>
-
 
 
                         <Line X1="{Binding Scene.Robot1.Point0.X}" Y1="{Binding Scene.Robot1.Point0.Y}" X2="{Binding Scene.Robot1.Point1.X}" Y2="{Binding Scene.Robot1.Point1.Y}" Stroke="Black" StrokeThickness="5" Visibility="{Binding Scene.ShowFirst, Converter={StaticResource BoolToVisibleOrHidden}}"></Line>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -41,11 +42,23 @@ namespace ReverseKinematic
             //   this.MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
             // MainCanvas.Children.Add(line);
             //_mainViewModel.Scene.ObstaclesCollection.Add(new RectangleObstacle(500,500,500,500));
+            _mainViewModel.Scene.TurnOnAnimationModeReverseKinematic += TurnOnAnimMode;
+            _mainViewModel.Scene.TurnOffAnimationModeReverseKinematic += TurnOffAnimMode;
 
         }
 
+        private void TurnOffAnimMode(object sender, PropertyChangedEventArgs e)
+        {
+            TurnOffAnimtionMode(true);
+        }
 
 
+        void TurnOnAnimMode(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            TurnOffAnimtionMode(false);
+
+            //glControl.Invalidate();
+        }
         private void MainWindow_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             //TODO: Zrobić automatyczne skalowanie.
@@ -178,8 +191,29 @@ namespace ReverseKinematic
 
         private void StartAnimation_OnClick(object sender, RoutedEventArgs e)
         {
+            TurnOffAnimtionMode(false);
             _mainViewModel.Scene.StartSimulation();
 
+        }
+
+        private void TurnOffAnimtionMode(bool input)
+        {
+            StopSimulation.IsEnabled = input;
+            ClearSceneButton.IsEnabled = input;
+            StartAnimation.IsEnabled = input;
+            L0.IsEnabled = input;
+            L1.IsEnabled = input;
+            AnimationLength.IsEnabled = input;
+            R1.IsEnabled = input;
+            R2.IsEnabled = input;
+            R3.IsEnabled = input;
+            R4.IsEnabled = input;
+            StopAnimation.IsEnabled = !input;
+        }
+
+        private void StopAnimation_OnClick(object sender, RoutedEventArgs e)
+        {
+            _mainViewModel.Scene.StopSimulation();
         }
     }
 }

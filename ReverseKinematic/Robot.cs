@@ -303,7 +303,7 @@ namespace ReverseKinematic
                 {
                     //TODO: Obsluga błędów
                     alpha1 = double.NaN;
-                    MessageBox.Show("Solution 1 not exist");
+                    //MessageBox.Show("Solution 1 not exist");
                    // _showFirstPermission = false;
                   //  OnPropertyChanged(nameof(ShowFirst));
                 }
@@ -332,7 +332,7 @@ namespace ReverseKinematic
                 }
                 else
                 {
-                    MessageBox.Show("Solution 2 not exist");
+                    //MessageBox.Show("Solution 2 not exist");
                     alpha2 = double.NaN;
                     //_showSecondPermission = false;
                     //OnPropertyChanged(nameof(ShowSecond));

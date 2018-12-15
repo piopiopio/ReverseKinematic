@@ -33,6 +33,43 @@ namespace ReverseKinematic
         //        OnPropertyChanged(nameof(Robot));
         //    }
         //}
+
+        private double _l0=100;
+
+        public double L0
+        {
+            get { return _l0; }
+            set
+            {
+                _l0 = value;
+                Robot1.L0 = _l0;
+                Robot2.L0 = _l0;
+                //_robot1 = new Robot(_l0, _l1, _startPosition);
+                //_robot2 = new Robot(_l0, _l1, _endPosition);
+                Robot1.SetNewPositionWorldCoordintaes(_startPosition);
+                Robot2.SetNewPositionWorldCoordintaes(_endPosition);
+                OnPropertyChanged(nameof(StartPosition));
+                OnPropertyChanged(nameof(EndPosition));
+            }
+        }
+        private double _l1=200;
+
+        public double L1
+        {
+            get { return _l1; }
+            set
+            {
+                _l1 = value;
+                Robot1.L1 = _l1;
+                Robot2.L1 = _l1;
+                //_robot1 = new Robot(_l0, _l1, _startPosition);
+                //_robot2 = new Robot(_l0, _l1, _endPosition);
+                Robot1.SetNewPositionWorldCoordintaes(_startPosition);
+                Robot2.SetNewPositionWorldCoordintaes(_endPosition);
+                OnPropertyChanged(nameof(StartPosition));
+                OnPropertyChanged(nameof(EndPosition));
+            }
+        }
         private double _simulationTime = 5;
         public double SimulationTime
         {
@@ -77,14 +114,14 @@ namespace ReverseKinematic
             }
         }
 
-        private bool _showAlternativeEnd = false;
+        private bool _showFirstEnd = true;
 
         public bool ShowFirstEnd
         {
-            get { return !_showAlternativeEnd && _showSecondPermission; }
+            get { return _showFirstEnd && _showSecondPermission; }
             set
             {
-                _showAlternativeEnd = false;
+                _showFirstEnd = true;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(ShowFirst));
                 OnPropertyChanged(nameof(ShowSecondEnd));
@@ -94,10 +131,10 @@ namespace ReverseKinematic
 
         public bool ShowSecondEnd
         {
-            get { return _showAlternativeEnd && _showSecondPermission; }
+            get { return !_showFirstEnd && _showSecondPermission; }
             set
             {
-                _showAlternativeEnd = true;
+                _showFirstEnd = false;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(ShowFirstEnd));
                 OnPropertyChanged(nameof(ShowSecondEnd));
@@ -219,7 +256,7 @@ namespace ReverseKinematic
             set
             {
                 _endPosition = value;
-                Robot2 = Robot1.Clone();
+                //Robot2 = Robot1.Clone();
                 var SolutionsFlags = Robot2.SetNewPositionWorldCoordintaes(_endPosition);
                 if (SolutionsFlags[0])
                 {
@@ -264,11 +301,11 @@ namespace ReverseKinematic
             _startPosition = new Point(300, 700);
             _endPosition = new Point(800, 500);
 
-            _robot1 = new Robot(200, 200, _startPosition);
-            _robot2 = new Robot(200, 200, _endPosition);
+            _robot1 = new Robot(_l0, _l1, _startPosition);
+            _robot2 = new Robot(_l0, _l1, _endPosition);
 
             ObstaclesCollection = new ObservableCollection<RectangleObstacle>();
-            bitmapHelper.SetColor(240, 248, 255);
+
             bitmapHelper.SetColor(120, 124, 128);
 
         }
@@ -329,9 +366,46 @@ namespace ReverseKinematic
         List<int[]> Path = new List<int[]>();
         void GetObstaclesInConfigurationSpace()
         {
+            int startAlpha0;
+            int startAlpha1;
+            int endAlpha0;
+            int endAlpha1;
+
+            if (_showFirst)
+            {
+                startAlpha0 = wrapAngle((int)(Robot1.Alpha0 * 180 / Math.PI));
+                startAlpha1 = wrapAngle((int)(Robot1.Alpha1 * 180 / Math.PI));
+            }
+            else
+            {
+                startAlpha0 = wrapAngle((int)(Robot1.Alpha0bis * 180 / Math.PI));
+                startAlpha1 = wrapAngle((int)(Robot1.Alpha1bis * 180 / Math.PI));
+            }
+
+
+            if (_showFirstEnd)
+            {
+                endAlpha0 = wrapAngle((int)(Robot2.Alpha0 * 180 / Math.PI));
+                endAlpha1 = wrapAngle((int)(Robot2.Alpha1 * 180 / Math.PI));
+            }
+            else
+            {
+                endAlpha0 = wrapAngle((int)(Robot2.Alpha0bis * 180 / Math.PI));
+                endAlpha1 = wrapAngle((int)(Robot2.Alpha1bis * 180 / Math.PI));
+            }
+
+            ConfigurationSpaceArray = new int[360, 360];
+            bitmapHelper.SetColor(240, 248, 255);
+            Path.Clear();
+
+            if (double.IsNaN(Robot1.Alpha0) || double.IsNaN(Robot1.Alpha1) || double.IsNaN(Robot2.Alpha0) || double.IsNaN(Robot2.Alpha1))
+            {
+                return;
+            }
+
             // _configurationSpace.Clear();
             Robot tempRobot = Robot1.Clone();
-            bitmapHelper.SetColor(240, 248, 255);
+
 
             for (int i = 0; i < 360; i++)
             {
@@ -357,33 +431,7 @@ namespace ReverseKinematic
             }
 
 
-            int startAlpha0;
-            int startAlpha1;
-            int endAlpha0;
-            int endAlpha1;
 
-            if (_showFirst)
-            {
-                startAlpha0 = wrapAngle((int)(Robot1.Alpha0 * 180 / Math.PI));
-                startAlpha1 = wrapAngle((int)(Robot1.Alpha1 * 180 / Math.PI));
-            }
-            else
-            {
-                startAlpha0 = wrapAngle((int)(Robot1.Alpha0bis * 180 / Math.PI));
-                startAlpha1 = wrapAngle((int)(Robot1.Alpha1bis * 180 / Math.PI));
-            }
-
-
-            if (_showAlternativeEnd)
-            {
-                endAlpha0 = wrapAngle((int)(Robot2.Alpha0 * 180 / Math.PI));
-                endAlpha1 = wrapAngle((int)(Robot2.Alpha1 * 180 / Math.PI));
-            }
-            else
-            {
-                endAlpha0 = wrapAngle((int)(Robot2.Alpha0bis * 180 / Math.PI));
-                endAlpha1 = wrapAngle((int)(Robot2.Alpha1bis * 180 / Math.PI));
-            }
 
             var maxDistance=arrayFloodFill(ConfigurationSpaceArray, startAlpha0, startAlpha1, endAlpha0, endAlpha1);
 
@@ -413,18 +461,18 @@ namespace ReverseKinematic
 
 
             double[] endAngles;
-            if (_showAlternativeEnd)
-            {
-                endAngles = new double[] { Robot2.Alpha0bis, Robot2.Alpha1bis };
-            }
-            else
+            if (_showFirstEnd)
             {
                 endAngles = new double[] { Robot2.Alpha0, Robot2.Alpha1 };
             }
+            else
+            {
+
+                endAngles = new double[] { Robot2.Alpha0bis, Robot2.Alpha1bis };
+            }
 
 
 
-            Path.Clear();
             Path.Add(new int[3] { (int)(endAngles[0] * 180 / Math.PI), (int)(endAngles[1] * 180 / Math.PI), ConfigurationSpaceArray[(int)(endAngles[0] * 180 / Math.PI), (int)(endAngles[1] * 180 / Math.PI)] });
             int value = ConfigurationSpaceArray[Path.Last()[0], Path.Last()[1]];
 
@@ -496,8 +544,8 @@ namespace ReverseKinematic
         }
         public void GenerateConfigurationSpaceMap()
         {
-            GetObstaclesInConfigurationSpace();
             CollisionCheck();
+            GetObstaclesInConfigurationSpace();
         }
 
         int arrayFloodFill(int[,] ConfigurationSpaceArray, int startPositionX, int startPositionY, int endPositionX, int endPositionY, int colorToChange = 0)
@@ -577,10 +625,10 @@ namespace ReverseKinematic
                 //}
 
                 // i++;
-                if (p[0] == endPositionX && p[1] == endPositionY)
-                {
-                    break;
-                }
+                //if (p[0] == endPositionX && p[1] == endPositionY)
+                //{
+                //    break;
+                //}
 
             }
 
@@ -697,6 +745,7 @@ namespace ReverseKinematic
                 }
             }
         }
+
         public void RefreshRobots()
         {
             ///OnPropertyChanged(nameof(Robot2));
@@ -726,38 +775,24 @@ namespace ReverseKinematic
 
         public void StartSimulation()
         {
-            
-            const int MinFramesPerSeconds = 10;
-
+            TurnOnAnimation();
+            CollisionCheck();
             GetObstaclesInConfigurationSpace();
             SavedRobotCopy = Robot1.Clone();
             timer = new DispatcherTimer(DispatcherPriority.Render);
-
-
-            //PathCopy =new List<int[]>();
-
-
-            //foreach (var item in Path)
-            //{
-            //    PathCopy.Add(item);
-            //}
-
-
-
-
-            //while ((PathCopy.Count / SimulationTime) < MinFramesPerSeconds)
-            //{
-            //    PathCopy = multiplicateFrames(PathCopy);
-            //}
-
-
-
             pathFrameNumber = Path.Count() - 1;
 
-
-            timer.Interval = TimeSpan.FromMilliseconds(1000 * SimulationTime / Path.Count);
-            timer.Tick += TimerOnTick;
-            timer.Start();
+            if (Path.Any())
+            {
+                
+                timer.Interval = TimeSpan.FromMilliseconds(1000 * SimulationTime / Path.Count);
+                timer.Tick += TimerOnTick;
+                timer.Start();
+            }
+            else
+            {
+                TurnOffAnimation();
+            }
         }
 
         //private List<int[]> PathCopy;
@@ -783,9 +818,16 @@ namespace ReverseKinematic
             }
             else
             {
-                timer.Stop();
-                Robot1 = SavedRobotCopy.Clone();
+                StopSimulation();
             }
+        }
+
+
+        public void StopSimulation()
+        {
+            timer.Stop();
+            Robot1 = SavedRobotCopy.Clone();
+            TurnOffAnimation();
         }
     }
 }
