@@ -400,6 +400,7 @@ namespace ReverseKinematic
 
             if (double.IsNaN(Robot1.Alpha0) || double.IsNaN(Robot1.Alpha1) || double.IsNaN(Robot2.Alpha0) || double.IsNaN(Robot2.Alpha1))
             {
+                OnPropertyChanged(nameof(ConfigurationSpaceBitmap));
                 return;
             }
 
@@ -435,7 +436,7 @@ namespace ReverseKinematic
 
             var maxDistance=arrayFloodFill(ConfigurationSpaceArray, startAlpha0, startAlpha1, endAlpha0, endAlpha1);
 
-
+            if (maxDistance == 0) return;
             for (int i = 0; i < 360; i++)
             {
                 for (int j = 0; j < 360; j++)
@@ -722,7 +723,7 @@ namespace ReverseKinematic
                         //TODO: obsługa bledu
                         //_showFirstPermission = false;
                         // OnPropertyChanged(nameof(ShowFirst));
-                        MessageBox.Show("Solution 1 obstacle");
+                        MessageBox.Show("Solution 1 obstacle START");
                         break;
                     };
                 }
@@ -739,7 +740,41 @@ namespace ReverseKinematic
                         //TODO: obsługa bledu
                         //_showFirstPermission = false;
                         OnPropertyChanged(nameof(ShowSecond));
-                        MessageBox.Show("Solution 2 obstacle");
+                        MessageBox.Show("Solution 2 obstacle START");
+                        break;
+                    }
+                }
+            }
+
+
+            if (_showFirstPermission)
+            {
+                foreach (var item in ObstaclesCollection)
+                {
+                    if (item.CollisionCheck(Robot2.Point0, Robot2.Point1) ||
+                        item.CollisionCheck(Robot2.Point1, Robot2.Point2))
+                    {
+                        //TODO: obsługa bledu
+                        //_showFirstPermission = false;
+                        // OnPropertyChanged(nameof(ShowFirst));
+                        MessageBox.Show("Solution 1 obstacle END");
+                        break;
+                    };
+                }
+
+
+            }
+            else
+            {
+                foreach (var item in ObstaclesCollection)
+                {
+                    if (item.CollisionCheck(Robot2.Point0, Robot2.Point1bis) ||
+                        item.CollisionCheck(Robot2.Point1bis, Robot2.Point2bis))
+                    {
+                        //TODO: obsługa bledu
+                        //_showFirstPermission = false;
+                        OnPropertyChanged(nameof(ShowSecond));
+                        MessageBox.Show("Solution 2 obstacle END");
                         break;
                     }
                 }
