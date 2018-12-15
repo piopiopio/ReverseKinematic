@@ -11,6 +11,17 @@ namespace ReverseKinematic
         {
 
         }
+
+        //private bool _visibility = true;
+        //public bool Visibility
+        //{
+        //    get { return _visibility; }
+        //    set
+        //    {
+        //        _visibility = value;
+        //        OnPropertyChanged();
+        //    }
+        //}
         public Robot(double l0, double l1, double alpha0, double alpha1, double alpha0bis, double alpha1bis)
         {
             _l0 = l0;
@@ -31,7 +42,8 @@ namespace ReverseKinematic
         {
             return new Robot(_l0, _l1,_alpha0, _alpha1, _alpha0bis, _alpha1bis);
         }
-        private void Refresh()
+
+        public void Refresh()
         {
             OnPropertyChanged(nameof(L0));
             OnPropertyChanged(nameof(L1));
@@ -42,6 +54,15 @@ namespace ReverseKinematic
             OnPropertyChanged(nameof(ExternalBoundaryRadius));
             OnPropertyChanged(nameof(InternalBoundaryRadius));
         }
+
+        public void RefreshFast()
+        {
+            OnPropertyChanged(nameof(Point1));
+            OnPropertyChanged(nameof(Point2));
+            OnPropertyChanged(nameof(Point1bis));
+            OnPropertyChanged(nameof(Point2bis));
+        }
+
         private double _l0 = 0;
         public double L0
         {
@@ -64,7 +85,7 @@ namespace ReverseKinematic
             }
         }
 
-        private double _alpha0 = 0;
+        public double _alpha0 = 0;
         public double Alpha0
         {
             get { return _alpha0; }
@@ -75,7 +96,7 @@ namespace ReverseKinematic
             }
         }
 
-        private double _alpha1 = 0;
+        public double _alpha1 = 0;
 
         public double Alpha1
         {
@@ -88,7 +109,7 @@ namespace ReverseKinematic
         }
 
 
-        private double _alpha0bis = 0;
+        public double _alpha0bis = 0;
         public double Alpha0bis
         {
             get { return _alpha0bis; }
@@ -99,7 +120,7 @@ namespace ReverseKinematic
             }
         }
 
-        private double _alpha1bis = 0;
+        public double _alpha1bis = 0;
 
         public double Alpha1bis
         {
@@ -197,31 +218,36 @@ namespace ReverseKinematic
             return (new Vector(p2.X, p2.Y) - new Vector(p1.X, p1.Y)).Length;
         }
 
-        public double[] SetNewPositionWorldCoordintaes(Point positionXY)
+        public bool[] SetNewPositionWorldCoordintaes(Point positionXY)
         {
-            var JointCoordinates=CalculateArmAnglesForPosition(positionXY);
-
+            var JointCoordinates = CalculateArmAnglesForPosition(positionXY);
+            bool temp1 = false;
+            bool temp2 = false;
             if (CheckIfDoubleIsNumber(JointCoordinates[0]) && CheckIfDoubleIsNumber(JointCoordinates[1]))
             {
                 Alpha0 = JointCoordinates[0];
                 Alpha1 = JointCoordinates[1];
                 Alpha0bis = JointCoordinates[2];
                 Alpha1bis = JointCoordinates[3];
+                temp1 = true;
             }
-            else if(CheckIfDoubleIsNumber(JointCoordinates[2]) && CheckIfDoubleIsNumber(JointCoordinates[3]))
+            if (CheckIfDoubleIsNumber(JointCoordinates[2]) && CheckIfDoubleIsNumber(JointCoordinates[3]))
             {
                 Alpha0 = JointCoordinates[2];
                 Alpha1 = JointCoordinates[3];
                 Alpha0bis = JointCoordinates[0];
                 Alpha1bis = JointCoordinates[1];
+                temp2 = true;
             }
-            else
-            {
-                MessageBox.Show("No solution found");
-            }
-            return new double[]{Alpha0, Alpha1, Alpha0bis, Alpha1bis};
+            //else
+            //{
+            //    MessageBox.Show("No solution found");
 
-        }
+            //}
+
+            //return new double[]{Alpha0, Alpha1, Alpha0bis, Alpha1bis};
+            return new bool[]{temp1, temp2};
+    }
 
         public static bool CheckIfDoubleIsNumber(double x)
         {
@@ -273,6 +299,7 @@ namespace ReverseKinematic
                 else
                 {
                     //TODO: Obsluga błędów
+                    alpha1 = double.NaN;
                     MessageBox.Show("Solution 1 not exist");
                    // _showFirstPermission = false;
                   //  OnPropertyChanged(nameof(ShowFirst));
@@ -303,6 +330,7 @@ namespace ReverseKinematic
                 else
                 {
                     MessageBox.Show("Solution 2 not exist");
+                    alpha2 = double.NaN;
                     //_showSecondPermission = false;
                     //OnPropertyChanged(nameof(ShowSecond));
                 }

@@ -18,26 +18,39 @@ namespace ReverseKinematic
     public class Scene : ViewModelBase
     {
         private Robot _robot1, _robot2;
-        private bool _alternativeSolution = false;
-        public bool AlternativeSolution
+        //private bool _alternativeSolution = false;
+
+
+        //public bool AlternativeSolution
+        //{
+        //    get
+        //    {
+        //        return _alternativeSolution;
+        //    }
+        //    set
+        //    {
+        //        _alternativeSolution = value;
+        //        OnPropertyChanged(nameof(Robot));
+        //    }
+        //}
+        private double _simulationTime = 5;
+        public double SimulationTime
         {
-            get
-            {
-                return _alternativeSolution;
-            }
+            get { return _simulationTime; }
             set
             {
-                _alternativeSolution = value;
-                OnPropertyChanged(nameof(Robot));
+                _simulationTime = value;
+                OnPropertyChanged();
             }
         }
+            
 
         private bool _showFirst = true;
         private bool _showFirstPermission = true;
 
         public bool ShowFirst
         {
-            get { return _showFirst; }
+            get { return _showFirst&& _showFirstPermission; }
             set
             {
                 _showFirst = true;
@@ -49,18 +62,18 @@ namespace ReverseKinematic
         }
 
         //private bool _showSecond = true;
-        //private bool _showSecondPermission = true;
+        private bool _showSecondPermission = true;
 
         public bool ShowSecond
         {
-            get { return !_showFirst; }
+            get { return !_showFirst && _showFirstPermission; }
             set
             {
                 // _showSecond = value;
                 _showFirst = false;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(ShowFirst));
-                //OnPropertyChanged(nameof(Robot1));
+                OnPropertyChanged(nameof(ShowSecondEnd));          
             }
         }
 
@@ -68,11 +81,12 @@ namespace ReverseKinematic
 
         public bool ShowFirstEnd
         {
-            get { return !_showAlternativeEnd; }
+            get { return !_showAlternativeEnd && _showSecondPermission; }
             set
             {
                 _showAlternativeEnd = false;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(ShowFirst));
                 OnPropertyChanged(nameof(ShowSecondEnd));
             }
         }
@@ -80,12 +94,13 @@ namespace ReverseKinematic
 
         public bool ShowSecondEnd
         {
-            get { return _showAlternativeEnd; }
+            get { return _showAlternativeEnd && _showSecondPermission; }
             set
             {
                 _showAlternativeEnd = true;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(ShowFirstEnd));
+                OnPropertyChanged(nameof(ShowSecondEnd));
             }
         }
         //public Robot Robot
@@ -158,35 +173,81 @@ namespace ReverseKinematic
             set
             {
                 _startPosition = value;
+            
+                var SolutionsFlags = Robot1.SetNewPositionWorldCoordintaes(_startPosition);
 
+                if (SolutionsFlags[0])
+                {
+                    _showFirstPermission = true;
+                 
+                }
+                else
+                {
+                    _showFirstPermission = false;
+                   
+                }
 
-                //var tempAngles = Robot1.CalculateArmAnglesForPosition(_startPosition);
-                var tempAngles = Robot1.SetNewPositionWorldCoordintaes(_startPosition);
+                if (SolutionsFlags[1])
+                {
+                    _showFirstPermission = true;
+                  
+                }
+                else
+                {
+                    _showFirstPermission = false;
+                }
+
                 //TODO: Obsługa błędów
-                //if (double.IsNaN(tempAngles[0]) || double.IsNaN(tempAngles[1]))
-                //{
-                //    //MessageBox.Show("Config 1-> error");
-                //}
-                //else
-                //{
-                //    _robot1.Alpha0 = tempAngles[0];
-                //    _robot1.Alpha1 = tempAngles[1];
-                //}
-
-                //if (double.IsNaN(tempAngles[2]) || double.IsNaN(tempAngles[3]))
-                //{
-                //    // MessageBox.Show("Config 2-> error");
-                //}
-                //else
-                //{
-                //    _robot1.Alpha0bis = tempAngles[2];
-                //    _robot1.Alpha1bis = tempAngles[3];
-                //    OnPropertyChanged(nameof(Robot));
-                //}
-
-                CollisionCheck();
+                OnPropertyChanged(nameof(ShowFirst));
+                OnPropertyChanged(nameof(ShowSecond));
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(Robot));
+
+                CollisionCheck();
+
+            }
+        }
+
+        private Point _endPosition;
+        public Point EndPosition
+        {
+            get
+            {
+
+                return _endPosition;
+            }
+            set
+            {
+                _endPosition = value;
+                Robot2 = Robot1.Clone();
+                var SolutionsFlags = Robot2.SetNewPositionWorldCoordintaes(_endPosition);
+                if (SolutionsFlags[0])
+                {
+                    _showSecondPermission = true;
+
+                }
+                else
+                {
+                    _showSecondPermission = false;
+
+                }
+
+                if (SolutionsFlags[1])
+                {
+                    _showSecondPermission = true;
+
+                }
+                else
+                {
+                    _showSecondPermission = false;
+                }
+
+
+                OnPropertyChanged(nameof(ShowFirstEnd));
+                OnPropertyChanged(nameof(ShowSecondEnd));
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(Robot));
+                CollisionCheck();
             }
         }
 
@@ -261,22 +322,7 @@ namespace ReverseKinematic
             }
         }
 
-        private Point _endPosition;
-        public Point EndPosition
-        {
-            get
-            {
-
-                return _endPosition;
-            }
-            set
-            {
-                _endPosition = value;
-                Robot2 = Robot1.Clone();
-                var tempAngles = Robot2.SetNewPositionWorldCoordintaes(_endPosition);
-                OnPropertyChanged();
-            }
-        }
+       
 
         BitmapHelper bitmapHelper = new BitmapHelper(360, 360);
 
@@ -560,34 +606,77 @@ namespace ReverseKinematic
         private Robot SavedRobotCopy;
         //private double _animationSpeed = 10;
         private int pathFrameNumber;
+
+        private List<int[]> multiplicateFrames(List<int[]> L)
+        {
+            var steps = L.Count - 2;
+            List < int[] > output=new List<int[]>();
+
+            for (int i = 0; i < steps; i++)
+            {
+                int[] temp = new int[2];
+                temp[0] = (L[i][0] + L[i+1][0]) / 2;
+                temp[1] = (L[i][1] + L[i+1][1]) / 2;
+                output.Add(L[i]);
+                output.Add(temp);
+            }
+            output.Add(L.Last());
+            return output;
+        }
+
         public void StartSimulation()
         {
-
-
+            const int MinFramesPerSeconds = 10;
 
             GetObstaclesInConfigurationSpace();
             SavedRobotCopy = Robot1.Clone();
+            timer = new DispatcherTimer(DispatcherPriority.Render);
 
-            timer = new DispatcherTimer();
-            //timer.Interval = TimeSpan.FromMilliseconds(30);
+
+            //PathCopy =new List<int[]>();
+
+
+            //foreach (var item in Path)
+            //{
+            //    PathCopy.Add(item);
+            //}
+
+
+
+
+            //while ((PathCopy.Count / SimulationTime) < MinFramesPerSeconds)
+            //{
+            //    PathCopy = multiplicateFrames(PathCopy);
+            //}
+
+
+
             pathFrameNumber = Path.Count() - 1;
-            //timer.Interval = TimeSpan.FromMilliseconds(100 / (double)_animationSpeed);
-            timer.Interval = TimeSpan.FromMilliseconds(10);
+
+
+            timer.Interval = TimeSpan.FromMilliseconds(1000*SimulationTime/ Path.Count);
             timer.Tick += TimerOnTick;
             timer.Start();
         }
 
+        //private List<int[]> PathCopy;
+        private List<Point[]> PointsList;
         private void TimerOnTick(object sender, EventArgs e)
         {
             if (pathFrameNumber >= 0)
             {
-                //   if (Robot.CheckIfDoubleIsNumber(Robot1.Alpha0) && Robot.CheckIfDoubleIsNumber(Robot1.Alpha1))
-                //   {
+                //Robot1._alpha0 = PathCopy[pathFrameNumber][0] * Math.PI / 180;
+                //Robot1._alpha1 = PathCopy[pathFrameNumber][1] * Math.PI / 180;
+                //Robot1._alpha0bis = PathCopy[pathFrameNumber][0] * Math.PI / 180;
+                //Robot1._alpha1bis = PathCopy[pathFrameNumber][1] * Math.PI / 180;
+                //Robot1.RefreshFast();
+                //pathFrameNumber--;
+
+
                 Robot1.Alpha0 = Path[pathFrameNumber][0] * Math.PI / 180;
                 Robot1.Alpha1 = Path[pathFrameNumber][1] * Math.PI / 180;
                 Robot1.Alpha0bis = Path[pathFrameNumber][0] * Math.PI / 180;
                 Robot1.Alpha1bis = Path[pathFrameNumber][1] * Math.PI / 180;
-                //  }
 
                 pathFrameNumber--;
             }

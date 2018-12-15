@@ -56,6 +56,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <Grid  Grid.Row="0" Grid.ColumnSpan="10">
@@ -100,9 +101,11 @@
                 <Label Grid.Row="1" Grid.Column="2" Content="Show end second:"></Label>
                 <RadioButton GroupName="End" Grid.Row="1" Grid.Column="3" IsChecked="{Binding Scene.ShowSecondEnd}"></RadioButton>
 
-            </Grid>
 
-            <Image  Grid.Row="5" Grid.ColumnSpan="10" Name="ConfigurationSpaceCanvas" Width="360" Height="360" Source="{Binding Scene.ConfigurationSpaceBitmap}"></Image>
+            </Grid>
+            <Label Grid.Row="5" Content="Animation time [s]:"></Label>
+            <TextBox Grid.Row="5" Grid.Column="1" Name="AnimationLength" Text="{Binding Scene.SimulationTime}"></TextBox>
+            <Image  Grid.Row="6" Grid.ColumnSpan="10" Name="ConfigurationSpaceCanvas" Width="360" Height="360" Source="{Binding Scene.ConfigurationSpaceBitmap}"></Image>
             <!--<ItemsControl Grid.Row="3" Grid.ColumnSpan="10" ItemsSource="{Binding Scene.ConfigurationSpace}" >
                 <ItemsControl.ItemContainerStyle >
                     <Style TargetType="ContentPresenter">
