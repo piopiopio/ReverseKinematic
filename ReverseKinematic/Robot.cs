@@ -239,11 +239,14 @@ namespace ReverseKinematic
                 Alpha1bis = JointCoordinates[1];
                 temp2 = true;
             }
-            //else
-            //{
-            //    MessageBox.Show("No solution found");
-
-            //}
+            else
+            {
+                MessageBox.Show("No solution found");
+                Alpha0 = JointCoordinates[0];
+                Alpha1 = JointCoordinates[1];
+                Alpha0bis = JointCoordinates[2];
+                Alpha1bis = JointCoordinates[3];
+            }
 
             //return new double[]{Alpha0, Alpha1, Alpha0bis, Alpha1bis};
             return new bool[]{temp1, temp2};

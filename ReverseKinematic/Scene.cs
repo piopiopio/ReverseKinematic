@@ -43,14 +43,14 @@ namespace ReverseKinematic
                 OnPropertyChanged();
             }
         }
-            
+
 
         private bool _showFirst = true;
         private bool _showFirstPermission = true;
 
         public bool ShowFirst
         {
-            get { return _showFirst&& _showFirstPermission; }
+            get { return _showFirst && _showFirstPermission; }
             set
             {
                 _showFirst = true;
@@ -73,7 +73,7 @@ namespace ReverseKinematic
                 _showFirst = false;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(ShowFirst));
-                OnPropertyChanged(nameof(ShowSecondEnd));          
+                OnPropertyChanged(nameof(ShowSecondEnd));
             }
         }
 
@@ -173,24 +173,24 @@ namespace ReverseKinematic
             set
             {
                 _startPosition = value;
-            
+
                 var SolutionsFlags = Robot1.SetNewPositionWorldCoordintaes(_startPosition);
 
                 if (SolutionsFlags[0])
                 {
                     _showFirstPermission = true;
-                 
+
                 }
                 else
                 {
                     _showFirstPermission = false;
-                   
+
                 }
 
                 if (SolutionsFlags[1])
                 {
                     _showFirstPermission = true;
-                  
+
                 }
                 else
                 {
@@ -322,7 +322,7 @@ namespace ReverseKinematic
             }
         }
 
-       
+
 
         BitmapHelper bitmapHelper = new BitmapHelper(360, 360);
 
@@ -357,22 +357,36 @@ namespace ReverseKinematic
             }
 
 
-            int a0;
-            int a1;
-
+            int startAlpha0;
+            int startAlpha1;
+            int endAlpha0;
+            int endAlpha1;
 
             if (_showFirst)
             {
-                a0 = wrapAngles((int)(Robot1.Alpha0 * 180 / Math.PI));
-                a1 = wrapAngles((int)(Robot1.Alpha1 * 180 / Math.PI));
+                startAlpha0 = wrapAngle((int)(Robot1.Alpha0 * 180 / Math.PI));
+                startAlpha1 = wrapAngle((int)(Robot1.Alpha1 * 180 / Math.PI));
             }
             else
             {
-                a0 = wrapAngles((int)(Robot1.Alpha0bis * 180 / Math.PI));
-                a1 = wrapAngles((int)(Robot1.Alpha1bis * 180 / Math.PI));
+                startAlpha0 = wrapAngle((int)(Robot1.Alpha0bis * 180 / Math.PI));
+                startAlpha1 = wrapAngle((int)(Robot1.Alpha1bis * 180 / Math.PI));
             }
 
-            arrayFloodFill(ConfigurationSpaceArray, a0, a1);
+
+            if (_showAlternativeEnd)
+            {
+                endAlpha0 = wrapAngle((int)(Robot2.Alpha0 * 180 / Math.PI));
+                endAlpha1 = wrapAngle((int)(Robot2.Alpha1 * 180 / Math.PI));
+            }
+            else
+            {
+                endAlpha0 = wrapAngle((int)(Robot2.Alpha0bis * 180 / Math.PI));
+                endAlpha1 = wrapAngle((int)(Robot2.Alpha1bis * 180 / Math.PI));
+            }
+
+            var maxDistance=arrayFloodFill(ConfigurationSpaceArray, startAlpha0, startAlpha1, endAlpha0, endAlpha1);
+
 
             for (int i = 0; i < 360; i++)
             {
@@ -380,7 +394,8 @@ namespace ReverseKinematic
                 {
                     if (ConfigurationSpaceArray[i, j] != -1)
                     {
-                        bitmapHelper.SetPixel(i, j, 0, (byte)(ConfigurationSpaceArray[i, j] * 255 / 720), 0);
+                        //bitmapHelper.SetPixel(i, j, 0, (byte)(ConfigurationSpaceArray[i, j] * 255 / 720), 0);
+                        bitmapHelper.SetPixel(i, j, 0, (byte)(ConfigurationSpaceArray[i, j] * 255 / maxDistance), 0);
                     }
                     else
                     {
@@ -419,28 +434,28 @@ namespace ReverseKinematic
 
 
 
-                if (ConfigurationSpaceArray[wrapAngles(Path.Last()[0] + 1), wrapAngles(Path.Last()[1])] == (value - 1))
+                if (ConfigurationSpaceArray[wrapAngle(Path.Last()[0] + 1), wrapAngle(Path.Last()[1])] == (value - 1))
                 {
-                    Path.Add(new int[3] { wrapAngles(Path.Last()[0] + 1), wrapAngles(Path.Last()[1]), wrapAngles(ConfigurationSpaceArray[Path.Last()[0] + 1, Path.Last()[1]]) });
+                    Path.Add(new int[3] { wrapAngle(Path.Last()[0] + 1), wrapAngle(Path.Last()[1]), wrapAngle(ConfigurationSpaceArray[wrapAngle(Path.Last()[0] + 1), wrapAngle(Path.Last()[1])]) });
                 }
 
-                else if (ConfigurationSpaceArray[wrapAngles(Path.Last()[0] - 1), wrapAngles(Path.Last()[1])] == (value - 1))
+                else if (ConfigurationSpaceArray[wrapAngle(Path.Last()[0] - 1), wrapAngle(Path.Last()[1])] == (value - 1))
                 {
                     {
-                        Path.Add(new int[3] { wrapAngles(Path.Last()[0] - 1), wrapAngles(Path.Last()[1]), wrapAngles(ConfigurationSpaceArray[Path.Last()[0] - 1, Path.Last()[1]]) });
+                        Path.Add(new int[3] { wrapAngle(Path.Last()[0] - 1), wrapAngle(Path.Last()[1]), wrapAngle(ConfigurationSpaceArray[wrapAngle(Path.Last()[0] - 1), wrapAngle(Path.Last()[1])]) });
                     }
                 }
 
-                else if (ConfigurationSpaceArray[wrapAngles(Path.Last()[0]), wrapAngles(Path.Last()[1] + 1)] == (value - 1))
+                else if (ConfigurationSpaceArray[wrapAngle(Path.Last()[0]), wrapAngle(Path.Last()[1] + 1)] == (value - 1))
                 {
                     {
-                        Path.Add(new int[3] { wrapAngles(Path.Last()[0]), wrapAngles(Path.Last()[1] + 1), wrapAngles(ConfigurationSpaceArray[Path.Last()[0], Path.Last()[1] + 1]) });
+                        Path.Add(new int[3] { wrapAngle(Path.Last()[0]), wrapAngle(Path.Last()[1] + 1), wrapAngle(ConfigurationSpaceArray[wrapAngle(Path.Last()[0]), wrapAngle(Path.Last()[1] + 1)]) });
                     }
                 }
-                else if (ConfigurationSpaceArray[wrapAngles(Path.Last()[0]), wrapAngles(Path.Last()[1] - 1)] == (value - 1))
+                else if (ConfigurationSpaceArray[wrapAngle(Path.Last()[0]), wrapAngle(Path.Last()[1] - 1)] == (value - 1))
                 {
                     {
-                        Path.Add(new int[3] { wrapAngles(Path.Last()[0]), wrapAngles(Path.Last()[1] - 1), wrapAngles(ConfigurationSpaceArray[Path.Last()[0], Path.Last()[1] - 1]) });
+                        Path.Add(new int[3] { wrapAngle(Path.Last()[0]), wrapAngle(Path.Last()[1] - 1), wrapAngle(ConfigurationSpaceArray[wrapAngle(Path.Last()[0]), wrapAngle(Path.Last()[1] - 1)]) });
                     }
                 }
 
@@ -449,7 +464,7 @@ namespace ReverseKinematic
                     MessageBox.Show("Path not found");
                 }
 
-                value = ConfigurationSpaceArray[wrapAngles(Path.Last()[0]), wrapAngles(Path.Last()[1])];
+                value = ConfigurationSpaceArray[wrapAngle(Path.Last()[0]), wrapAngle(Path.Last()[1])];
 
             }
 
@@ -460,7 +475,7 @@ namespace ReverseKinematic
             OnPropertyChanged(nameof(ConfigurationSpaceBitmap));
         }
 
-        public int wrapAngles(int input)
+        public int wrapAngle(int input)
         {
             int temp = input;
             while (true)
@@ -485,76 +500,161 @@ namespace ReverseKinematic
             CollisionCheck();
         }
 
-        void arrayFloodFill(int[,] ConfigurationSpaceArray, int positionX, int positionY, int colorToChange = 0)
+        int arrayFloodFill(int[,] ConfigurationSpaceArray, int startPositionX, int startPositionY, int endPositionX, int endPositionY, int colorToChange = 0)
         {
 
 
-            if (ConfigurationSpaceArray[positionX, positionY] != colorToChange)
+            if (ConfigurationSpaceArray[startPositionX, startPositionY] != colorToChange)
             {
-                return;
+                return 0;
             }
 
-            // int i = 0;
             var toFill = new List<int[]>();
 
-            toFill.Add(new int[3] { positionX, positionY, 1 });
-
+            toFill.Add(new int[3] { startPositionX, startPositionY, 1 });
+            int maxValue = 0;
             while (toFill.Any())
             {
                 var p = toFill[0];
                 toFill.RemoveAt(0);
 
                 ConfigurationSpaceArray[p[0], p[1]] = p[2];
+                maxValue = Math.Max(maxValue, p[2]);
 
 
-
-                if ((p[0] + 1) < ConfigurationSpaceArray.GetLength(0))
-                {
-                    if ((ConfigurationSpaceArray[p[0] + 1, p[1]] == colorToChange) &&
-                        !toFill.Any(t => (t[0] == (p[0] + 1)) && (t[1] == p[1])))
+                //if ((p[0] + 1) < ConfigurationSpaceArray.GetLength(0))
+                //{
+                    if ((ConfigurationSpaceArray[wrapAngle(p[0] + 1), wrapAngle(p[1])] == colorToChange) &&
+                        !toFill.Any(t => (t[0] == wrapAngle(p[0] + 1)) && (t[1] == wrapAngle(p[1]))))
                     {
-                        toFill.Add(new int[3] { p[0] + 1, p[1], p[2] + 1 });
+                        toFill.Add(new int[3] {  wrapAngle(p[0] + 1), wrapAngle(p[1]), p[2] + 1 });
                     }
+                //}
+
+                //if ((p[0] - 1) >= 0)
+                //{
+
+                if ((ConfigurationSpaceArray[wrapAngle(p[0] - 1), wrapAngle(p[1])] == colorToChange) &&
+                    !toFill.Any(t => (t[0] == wrapAngle(p[0] - 1)) && (t[1] == wrapAngle(p[1]))))
+                {
+                    toFill.Add(new int[3] { wrapAngle(p[0] - 1), wrapAngle(p[1]), p[2] + 1 });
+                }
+                //if ((ConfigurationSpaceArray[p[0] - 1, p[1]] == colorToChange) &&
+                //        !toFill.Any(t => (t[0] == (p[0] - 1)) && (t[1] == p[1])))
+                //    {
+                //        toFill.Add(new int[3] { p[0] - 1, p[1], p[2] + 1 });
+                //    }
+                //}
+
+                //if ((p[1] + 1) < ConfigurationSpaceArray.GetLength(1))
+                //{
+                if ((ConfigurationSpaceArray[wrapAngle(p[0]), wrapAngle(p[1]+1)] == colorToChange) &&
+                    !toFill.Any(t => (t[0] == wrapAngle(p[0] )) && (t[1] == wrapAngle(p[1]+1))))
+                {
+                    toFill.Add(new int[3] { wrapAngle(p[0]), wrapAngle(p[1]+1), p[2] + 1 });
                 }
 
-                if ((p[0] - 1) >= 0)
+                //if ((ConfigurationSpaceArray[p[0], p[1] + 1] == colorToChange) &&
+                //        !toFill.Any(t => (t[0] == p[0]) && (t[1] == (p[1] + 1))))
+                //    {
+                //        toFill.Add(new int[3] { p[0], p[1] + 1, p[2] + 1 });
+                //    }
+                //}
+
+                //if ((p[1] - 1) >= 0)
+                //{
+                if ((ConfigurationSpaceArray[wrapAngle(p[0]), wrapAngle(p[1] - 1)] == colorToChange) &&
+                    !toFill.Any(t => (t[0] == wrapAngle(p[0])) && (t[1] == wrapAngle(p[1] - 1))))
                 {
-                    if ((ConfigurationSpaceArray[p[0] - 1, p[1]] == colorToChange) &&
-                        !toFill.Any(t => (t[0] == (p[0] - 1)) && (t[1] == p[1])))
-                    {
-                        toFill.Add(new int[3] { p[0] - 1, p[1], p[2] + 1 });
-                    }
+                    toFill.Add(new int[3] { wrapAngle(p[0]), wrapAngle(p[1] - 1), p[2] + 1 });
                 }
 
-                if ((p[1] + 1) < ConfigurationSpaceArray.GetLength(1))
-                {
-                    if ((ConfigurationSpaceArray[p[0], p[1] + 1] == colorToChange) &&
-                        !toFill.Any(t => (t[0] == p[0]) && (t[1] == (p[1] + 1))))
-                    {
-                        toFill.Add(new int[3] { p[0], p[1] + 1, p[2] + 1 });
-                    }
-                }
-
-                if ((p[1] - 1) >= 0)
-                {
-
-                    if ((ConfigurationSpaceArray[p[0], p[1] - 1] == colorToChange) &&
-                                            !toFill.Any(t => (t[0] == p[0]) && (t[1] == (p[1] - 1))))
-                    {
-                        toFill.Add(new int[3] { p[0], p[1] - 1, p[2] + 1 });
-                    }
-                }
+                //if ((ConfigurationSpaceArray[p[0], p[1] - 1] == colorToChange) &&
+                //                            !toFill.Any(t => (t[0] == p[0]) && (t[1] == (p[1] - 1))))
+                //    {
+                //        toFill.Add(new int[3] { p[0], p[1] - 1, p[2] + 1 });
+                //    }
+                //}
 
                 // i++;
-
+                if (p[0] == endPositionX && p[1] == endPositionY)
+                {
+                    break;
+                }
 
             }
 
-
-
-
-
+            return maxValue;
         }
+  //void arrayFloodFill(int[,] ConfigurationSpaceArray, int startPositionX, int startPositionY, int endPositionX, int endPositionY, int colorToChange = 0)
+  //      {
+
+
+  //          if (ConfigurationSpaceArray[startPositionX, startPositionY] != colorToChange)
+  //          {
+  //              return;
+  //          }
+
+  //          var toFill = new List<int[]>();
+
+  //          toFill.Add(new int[3] { startPositionX, startPositionY, 1 });
+
+  //          while (toFill.Any())
+  //          {
+  //              var p = toFill[0];
+  //              toFill.RemoveAt(0);
+
+  //              ConfigurationSpaceArray[p[0], p[1]] = p[2];
+
+
+
+  //              if ((p[0] + 1) < ConfigurationSpaceArray.GetLength(0))
+  //              {
+  //                  if ((ConfigurationSpaceArray[p[0] + 1, p[1]] == colorToChange) &&
+  //                      !toFill.Any(t => (t[0] == (p[0] + 1)) && (t[1] == p[1])))
+  //                  {
+  //                      toFill.Add(new int[3] { p[0] + 1, p[1], p[2] + 1 });
+  //                  }
+  //              }
+
+  //              if ((p[0] - 1) >= 0)
+  //              {
+  //                  if ((ConfigurationSpaceArray[p[0] - 1, p[1]] == colorToChange) &&
+  //                      !toFill.Any(t => (t[0] == (p[0] - 1)) && (t[1] == p[1])))
+  //                  {
+  //                      toFill.Add(new int[3] { p[0] - 1, p[1], p[2] + 1 });
+  //                  }
+  //              }
+
+  //              if ((p[1] + 1) < ConfigurationSpaceArray.GetLength(1))
+  //              {
+  //                  if ((ConfigurationSpaceArray[p[0], p[1] + 1] == colorToChange) &&
+  //                      !toFill.Any(t => (t[0] == p[0]) && (t[1] == (p[1] + 1))))
+  //                  {
+  //                      toFill.Add(new int[3] { p[0], p[1] + 1, p[2] + 1 });
+  //                  }
+  //              }
+
+  //              if ((p[1] - 1) >= 0)
+  //              {
+
+  //                  if ((ConfigurationSpaceArray[p[0], p[1] - 1] == colorToChange) &&
+  //                                          !toFill.Any(t => (t[0] == p[0]) && (t[1] == (p[1] - 1))))
+  //                  {
+  //                      toFill.Add(new int[3] { p[0], p[1] - 1, p[2] + 1 });
+  //                  }
+  //              }
+
+  //              // i++;
+
+
+  //          }
+
+
+
+
+
+  //      }
 
 
         //public double[] CalculateArmAnglesForPosition(Point position)
@@ -610,13 +710,13 @@ namespace ReverseKinematic
         private List<int[]> multiplicateFrames(List<int[]> L)
         {
             var steps = L.Count - 2;
-            List < int[] > output=new List<int[]>();
+            List<int[]> output = new List<int[]>();
 
             for (int i = 0; i < steps; i++)
             {
                 int[] temp = new int[2];
-                temp[0] = (L[i][0] + L[i+1][0]) / 2;
-                temp[1] = (L[i][1] + L[i+1][1]) / 2;
+                temp[0] = (L[i][0] + L[i + 1][0]) / 2;
+                temp[1] = (L[i][1] + L[i + 1][1]) / 2;
                 output.Add(L[i]);
                 output.Add(temp);
             }
@@ -626,6 +726,7 @@ namespace ReverseKinematic
 
         public void StartSimulation()
         {
+            
             const int MinFramesPerSeconds = 10;
 
             GetObstaclesInConfigurationSpace();
@@ -654,7 +755,7 @@ namespace ReverseKinematic
             pathFrameNumber = Path.Count() - 1;
 
 
-            timer.Interval = TimeSpan.FromMilliseconds(1000*SimulationTime/ Path.Count);
+            timer.Interval = TimeSpan.FromMilliseconds(1000 * SimulationTime / Path.Count);
             timer.Tick += TimerOnTick;
             timer.Start();
         }

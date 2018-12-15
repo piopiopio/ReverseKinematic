@@ -105,7 +105,25 @@
             </Grid>
             <Label Grid.Row="5" Content="Animation time [s]:"></Label>
             <TextBox Grid.Row="5" Grid.Column="1" Name="AnimationLength" Text="{Binding Scene.SimulationTime}"></TextBox>
-            <Image  Grid.Row="6" Grid.ColumnSpan="10" Name="ConfigurationSpaceCanvas" Width="360" Height="360" Source="{Binding Scene.ConfigurationSpaceBitmap}"></Image>
+           
+            <Grid  Grid.Row="6" Grid.ColumnSpan="10" HorizontalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Label Content="beta" VerticalAlignment="Center">
+                    <Label.LayoutTransform>
+                        <RotateTransform Angle="90" />
+                    </Label.LayoutTransform>
+                </Label>
+                <Image Grid.Column="1" Grid.Row="0" Name="ConfigurationSpaceCanvas" Width="360" Height="360" Source="{Binding Scene.ConfigurationSpaceBitmap}"></Image>
+                <Label Grid.Row="1" Grid.ColumnSpan="2" Content="alpha" HorizontalAlignment="Center"></Label>
+
+                </Grid>
             <!--<ItemsControl Grid.Row="3" Grid.ColumnSpan="10" ItemsSource="{Binding Scene.ConfigurationSpace}" >
                 <ItemsControl.ItemContainerStyle >
                     <Style TargetType="ContentPresenter">

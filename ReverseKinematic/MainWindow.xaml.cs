@@ -167,18 +167,19 @@ namespace ReverseKinematic
             }
         }
 
-        private void L0_OnLostFocus(object sender, RoutedEventArgs e)
-        {
+        //private void L0_OnLostFocus(object sender, RoutedEventArgs e)
+        //{
 
-            //_mainViewModel.Scene.Robot1.L0 = _mainViewModel.Scene.Robot2.L0;
-            //_mainViewModel.Scene.Robot1.L1 = _mainViewModel.Scene.Robot2.L1;
-            _mainViewModel.Scene.RefreshRobots();
-        }
+        //    //_mainViewModel.Scene.Robot1.L0 = _mainViewModel.Scene.Robot2.L0;
+        //    //_mainViewModel.Scene.Robot1.L1 = _mainViewModel.Scene.Robot2.L1;
+        //    _mainViewModel.Scene.RefreshRobots();
+        //}
 
 
         private void StartAnimation_OnClick(object sender, RoutedEventArgs e)
         {
             _mainViewModel.Scene.StartSimulation();
+
         }
     }
 }
