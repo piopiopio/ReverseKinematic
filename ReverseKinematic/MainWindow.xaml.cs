@@ -45,7 +45,9 @@ namespace ReverseKinematic
             _mainViewModel.Scene.TurnOnAnimationModeReverseKinematic += TurnOnAnimMode;
             _mainViewModel.Scene.TurnOffAnimationModeReverseKinematic += TurnOffAnimMode;
 
+       
         }
+
 
         private void TurnOffAnimMode(object sender, PropertyChangedEventArgs e)
         {
@@ -93,12 +95,12 @@ namespace ReverseKinematic
 
         private void MainCanvas_OnLeftMouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (Keyboard.IsKeyDown(Key.LeftCtrl))
+            if (Keyboard.IsKeyDown(Key.LeftShift))
             {
                 _mainViewModel.Scene.StartPosition = rescalePoint(e.GetPosition(MainViewbox));
             }
 
-            else if (Keyboard.IsKeyDown(Key.LeftShift))
+            else if (Keyboard.IsKeyDown(Key.LeftCtrl))
             {
                 _mainViewModel.Scene.SelectObstacle(rescalePoint(e.GetPosition(MainViewbox)));
                 moveVector = rescalePoint(e.GetPosition(MainViewbox));
@@ -117,7 +119,7 @@ namespace ReverseKinematic
         {
             var currentPosition = rescalePoint(e.GetPosition(MainViewbox));
 
-            if (Keyboard.IsKeyDown(Key.LeftCtrl))
+            if (Keyboard.IsKeyDown(Key.LeftAlt))
             {
 
 
@@ -128,11 +130,12 @@ namespace ReverseKinematic
             {
 
                 var newPosition = rescalePoint(e.GetPosition(MainViewbox));
+
                 var Width = newPosition.X - position.X;
                 var Height = newPosition.Y - position.Y;
                 if (Width < 0) tempRectangle.From = new Point(newPosition.X, tempRectangle.From.Y);
                 if (Height < 0) tempRectangle.From = new Point(tempRectangle.From.X, newPosition.Y);
-                tempRectangle.Size = new Point(Math.Abs(Width), Math.Abs(Height));
+                tempRectangle.Size = new Point(Math.Max(Math.Abs(Width),10), Math.Max(Math.Abs(Height),10));
             }
             moveVector = currentPosition;
         }
@@ -173,7 +176,7 @@ namespace ReverseKinematic
 
         private void ClearScene(object sender, RoutedEventArgs e)
         {
-            _mainViewModel.Scene.ObstaclesCollection.Clear();
+            _mainViewModel.Scene.ObstaclesCollection.Clear();        
         }
 
         private void OnKeyDown(object sender, KeyEventArgs e)
@@ -194,7 +197,8 @@ namespace ReverseKinematic
 
 
         private void StartAnimation_OnClick(object sender, RoutedEventArgs e)
-        {
+        { 
+           // AlertPopup.IsOpen = true;
             TurnOffAnimtionMode(false);
             _mainViewModel.Scene.StartSimulation();
 
@@ -202,6 +206,7 @@ namespace ReverseKinematic
 
         private void TurnOffAnimtionMode(bool input)
         {
+            //AlertPopup.IsOpen = false;
             StopSimulation.IsEnabled = input;
             ClearSceneButton.IsEnabled = input;
             StartAnimation.IsEnabled = input;

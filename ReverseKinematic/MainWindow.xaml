@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ReverseKinematic" 
         xmlns:system="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="MainWindow" Name="MainWindow1" WindowState="Maximized" SizeChanged="MainWindow_OnSizeChanged"  KeyDown="OnKeyDown" MinWidth="900">
+        Title="MainWindow" Name="MainWindow1" WindowState="Maximized" SizeChanged="MainWindow_OnSizeChanged"  KeyDown="OnKeyDown" MinWidth="900" d:DesignHeight="917.5">
 
     <Window.Resources>
         <local:BaseConverter x:Key="BaseConverter"/>
@@ -44,12 +44,17 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Grid  Grid.Column="1" Grid.Row="0">
+        <Grid  Grid.Column="1" Grid.Row="0" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -128,16 +133,29 @@
                         <RotateTransform Angle="90" />
                     </Label.LayoutTransform>
                 </Label>
-                <Image Grid.Column="1" Grid.Row="0" Name="ConfigurationSpaceCanvas" Width="360" Height="360" Source="{Binding Scene.ConfigurationSpaceBitmap}"></Image>
+                <Image Grid.Column="1" Grid.Row="0" Name="ConfigurationSpaceCanvas" Margin="20,40,20,20" Width="360" Height="360" Source="{Binding Scene.ConfigurationSpaceBitmap}"></Image>
                 <Label Grid.Row="1" Grid.ColumnSpan="2" Content="alpha" HorizontalAlignment="Center"></Label>
 
                 </Grid>
-            <Label Grid.Row="7" Content="LMB    --place finish position"></Label>
-            <Label Grid.Row="8" Content="LMB + left CTRL    --place start position"></Label>
-            <Label Grid.Row="9" Content="RMB + Mouse move    --place obstacle"></Label>
-            <Label Grid.Row="10" Content="LMB + left shift    --select obstacle"></Label>
-            <Label Grid.Row="11" Content="Mouse move + left ctrl    --move selected obstacles"></Label>
-            <Label Grid.Row="12" Content="Delete    --move selected obstacles"></Label>
+            <Label Grid.Row="7" Content="Tips:"></Label>
+            <Label Grid.Row="8" Content="LMB    --place finish position"></Label>
+            <Label Grid.Row="9" Content="LMB + left shift    --place start position"></Label>
+            <Label Grid.Row="10" Content="RMB + mouse move    --place obstacle"></Label>
+            <Label Grid.Row="11" Content="LMB + left ctrl    --select/deselect obstacle"></Label>
+            <Label Grid.Row="12" Content="mouse move + left alt    --move selected obstacles"></Label>
+            <Label Grid.Row="13" Content="delete    --delete selected obstacles"></Label>
+            <Label Grid.Row="14" VerticalAlignment="Bottom" Name="Status" Content="Status: " Margin="0,100,100,0"></Label>
+            <StackPanel Orientation="Horizontal" Grid.Row="15" Grid.ColumnSpan="10">
+                <Label Content="{Binding Scene.Status}" Foreground="{Binding Scene.StatusColor}"></Label>
+                <Label Content=" || Start:" Foreground="{Binding Scene.Robot1.StatusColor}"></Label>
+                <Label Content="{Binding Scene.Robot1.Status}" Foreground="{Binding Scene.Robot1.StatusColor}"></Label>
+                <Label Content= " || End:" Foreground="{Binding Scene.Robot2.StatusColor}"></Label>
+                <Label Content="{Binding Scene.Robot2.Status}" Foreground="{Binding Scene.Robot2.StatusColor}"></Label>
+                <Label Content="{Binding Scene.Status2}" Foreground="{Binding Scene.StatusColor2}"></Label>
+            </StackPanel>
+            <!--<Popup Grid.Row="13" Width="300" Height="100" Name="AlertPopup">
+    <TextBlock Background="Chartreuse" Text="PopUp test"></TextBlock>
+</Popup>-->
 
             <!--<ItemsControl Grid.Row="3" Grid.ColumnSpan="10" ItemsSource="{Binding Scene.ConfigurationSpace}" >
                 <ItemsControl.ItemContainerStyle >
@@ -171,6 +189,7 @@
 
 
             <Viewbox Name="MainViewbox" Stretch="Uniform"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+
                 <Grid>
 
 

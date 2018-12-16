@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -42,14 +43,34 @@ namespace ReverseKinematic
             set
             {
                 _l0 = value;
+                var tempRobot1 = Robot1.Clone();
+                var tempRobot2 = Robot2.Clone();
                 Robot1.L0 = _l0;
                 Robot2.L0 = _l0;
+                StartPosition = Robot1.Point2;
+                EndPosition = Robot2.Point2;
                 //_robot1 = new Robot(_l0, _l1, _startPosition);
                 //_robot2 = new Robot(_l0, _l1, _endPosition);
-                Robot1.SetNewPositionWorldCoordintaes(_startPosition);
-                Robot2.SetNewPositionWorldCoordintaes(_endPosition);
-                OnPropertyChanged(nameof(StartPosition));
-                OnPropertyChanged(nameof(EndPosition));
+
+                //Robot1.SetNewPositionWorldCoordintaes(_startPosition);
+                // Robot2.SetNewPositionWorldCoordintaes(_endPosition);
+                //OnPropertyChanged(nameof(StartPosition));
+                //OnPropertyChanged(nameof(EndPosition));
+                if (double.IsNaN(Robot1.Alpha0) || double.IsNaN(Robot1.Alpha1))
+                {
+                    Robot1.Alpha0 = tempRobot1.Alpha0;
+                    Robot1.Alpha1 = tempRobot1.Alpha1;
+                   
+                    //  Robot1.Refresh();
+                }
+
+                if (double.IsNaN(Robot2.Alpha0) || double.IsNaN(Robot2.Alpha1))
+                {
+                    Robot2.Alpha0 = tempRobot2.Alpha0;
+                    Robot2.Alpha1 = tempRobot2.Alpha1;
+                  
+                    //    Robot2.Refresh();
+                }
             }
         }
         private double _l1 = 250;
@@ -60,14 +81,34 @@ namespace ReverseKinematic
             set
             {
                 _l1 = value;
+                var tempRobot1 = Robot1.Clone();
+                var tempRobot2 = Robot2.Clone();
                 Robot1.L1 = _l1;
                 Robot2.L1 = _l1;
+                StartPosition = Robot1.Point2;
+                EndPosition = Robot2.Point2;
                 //_robot1 = new Robot(_l0, _l1, _startPosition);
                 //_robot2 = new Robot(_l0, _l1, _endPosition);
-                Robot1.SetNewPositionWorldCoordintaes(_startPosition);
-                Robot2.SetNewPositionWorldCoordintaes(_endPosition);
+
+
+                //Robot1.SetNewPositionWorldCoordintaes(_startPosition);
+                //Robot2.SetNewPositionWorldCoordintaes(_endPosition);
                 OnPropertyChanged(nameof(StartPosition));
                 OnPropertyChanged(nameof(EndPosition));
+                if (double.IsNaN(Robot1.Alpha0) || double.IsNaN(Robot1.Alpha1))
+                {
+                    Robot1.Alpha0 = tempRobot1.Alpha0;
+                    Robot1.Alpha1 = tempRobot1.Alpha1;
+   //Robot1.Refresh();
+                }
+
+                if (double.IsNaN(Robot2.Alpha0) || double.IsNaN(Robot2.Alpha1))
+                {
+                    Robot2.Alpha0 = tempRobot2.Alpha0;
+                    Robot2.Alpha1 = tempRobot2.Alpha1;
+                    
+                    //Robot2.Refresh();
+                }
             }
         }
         private double _simulationTime = 5;
@@ -710,6 +751,53 @@ namespace ReverseKinematic
         //{
 
         //}
+        private string _status = "No collision found";
+
+        public string Status
+        {
+            get { return _status; }
+            set
+            {
+                _status = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private System.Windows.Media.Brush _statusColor=System.Windows.Media.Brushes.DarkGreen;
+
+        public System.Windows.Media.Brush StatusColor
+        {
+            get { return _statusColor; }
+            set
+            {
+                _statusColor = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _status2 = "";
+
+        public string Status2
+        {
+            get { return _status2; }
+            set
+            {
+                _status2 = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private System.Windows.Media.Brush _statusColor2 = System.Windows.Media.Brushes.DarkRed;
+
+        public System.Windows.Media.Brush StatusColor2
+        {
+            get { return _statusColor2; }
+            set
+            {
+                _statusColor2 = value;
+                OnPropertyChanged();
+            }
+        }
 
         public bool CollisionCheck()
         {
@@ -718,7 +806,8 @@ namespace ReverseKinematic
             //bool collisionDetectedStart2 = false;
             //bool collisionDetectedEnd1 = false;
             //bool collisionDetectedEnd2 = false;
-
+            _status ="";
+           
             if (_showFirst)
             {
                 foreach (var item in ObstaclesCollection)
@@ -729,7 +818,9 @@ namespace ReverseKinematic
                         //TODO: obsługa bledu
                         //_showFirstPermission = false;
                         // OnPropertyChanged(nameof(ShowFirst));
-                        MessageBox.Show("Solution 1 obstacle START");
+                        //MessageBox.Show(" Solution 1 obstacle START ");
+                        _status+="||START: collision";
+                        _statusColor = System.Windows.Media.Brushes.DarkRed;
                         collisionDetected = true;
                         break;
                     };
@@ -747,7 +838,9 @@ namespace ReverseKinematic
                         //TODO: obsługa bledu
                         //_showFirstPermission = false;
                         OnPropertyChanged(nameof(ShowSecond));
-                        MessageBox.Show("Solution 2 obstacle START");
+                        //MessageBox.Show("Solution 2 obstacle START");
+                        _status+= "||START collision";
+                        _statusColor = System.Windows.Media.Brushes.DarkRed;
                         collisionDetected = true;
                         break;
                     }
@@ -765,7 +858,9 @@ namespace ReverseKinematic
                         //TODO: obsługa bledu
                         //_showFirstPermission = false;
                         // OnPropertyChanged(nameof(ShowFirst));
-                        MessageBox.Show("Solution 1 obstacle END");
+                        //MessageBox.Show("Solution 1 obstacle END");
+                        _status+= " ||END: collision";
+                        _statusColor = System.Windows.Media.Brushes.DarkRed;
                         collisionDetected = true;
                         break;
                     };
@@ -783,12 +878,22 @@ namespace ReverseKinematic
                         //TODO: obsługa bledu
                         //_showFirstPermission = false;
                         OnPropertyChanged(nameof(ShowSecond));
-                        MessageBox.Show("Solution 2 obstacle END");
+                        //MessageBox.Show("Solution 2 obstacle END");
+                        _status+= " ||END: collision";
+                        _statusColor = System.Windows.Media.Brushes.DarkRed;
                         collisionDetected = true;
                         break;
                     }
                 }
             }
+
+            if (_status=="")
+            {
+                _status = "||No collision found";
+                _statusColor = System.Windows.Media.Brushes.DarkGreen;
+            }
+            OnPropertyChanged(nameof(Status));
+            OnPropertyChanged(nameof(StatusColor));
             return collisionDetected;
         }
 
@@ -828,17 +933,19 @@ namespace ReverseKinematic
             timer = new DispatcherTimer(DispatcherPriority.Render);
             pathFrameNumber = Path.Count() - 1;
 
-            if (Path.Any())
+            if (Path.Count>1)
             {
-
+                Status2 = "";
                 timer.Interval = TimeSpan.FromMilliseconds(1000 * SimulationTime / Path.Count);
                 timer.Tick += TimerOnTick;
                 timer.Start();
             }
             else
             {
+                Status2 = " || No path found";
                 TurnOffAnimation();
             }
+           // OnPropertyChanged(nameof(Status2));
         }
 
         //private List<int[]> PathCopy;

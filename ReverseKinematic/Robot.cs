@@ -22,6 +22,31 @@ namespace ReverseKinematic
         //        OnPropertyChanged();
         //    }
         //}
+        private string _status = "inverse kinematic solution found";
+
+        public string Status
+        {
+            get { return _status; }
+            set
+            {
+                _status = value;
+                OnPropertyChanged();
+            }
+        }
+
+
+        private System.Windows.Media.Brush _statusColor = System.Windows.Media.Brushes.DarkGreen;
+
+        public System.Windows.Media.Brush StatusColor
+        {
+            get { return _statusColor; }
+            set
+            {
+                _statusColor = value;
+                OnPropertyChanged();
+            }
+        }
+
         public Robot(double l0, double l1, double alpha0, double alpha1, double alpha0bis, double alpha1bis)
         {
             _l0 = l0;
@@ -146,10 +171,7 @@ namespace ReverseKinematic
         {
             get
             {
-                //return CenterPoint + new Vector(L0 * Math.Cos(_alpha0), L0 * Math.Sin(_alpha0));
                 var joint = new Point(CenterPoint.X + (L0 * Math.Cos(Alpha0)), CenterPoint.Y + (L0 * Math.Sin(Alpha0)));
-              
-
                 return joint;
             }
         }
@@ -158,7 +180,6 @@ namespace ReverseKinematic
         {
             get
             {
-                // return (CenterPoint + new Vector(L0 * Math.Cos(_alpha0), L0 * Math.Sin(_alpha0)) + new Vector(L1 * Math.Cos(_alpha0 + _alpha1), L1 * Math.Sin(_alpha0 + _alpha1)));
                 var joint = new Point(CenterPoint.X + (L0 * Math.Cos(Alpha0)), CenterPoint.Y + (L0 * Math.Sin(Alpha0)));
                 var end = new Point(joint.X + (L1 * (((Math.Cos(Alpha1) * Math.Cos(Alpha0))) + (Math.Sin(Alpha1) * Math.Sin(Alpha0)))),
                     joint.Y + (L1 * (-(Math.Sin(Alpha1) * Math.Cos(Alpha0)) + (Math.Cos(Alpha1) * Math.Sin(Alpha0)))));
@@ -221,6 +242,8 @@ namespace ReverseKinematic
         public bool[] SetNewPositionWorldCoordintaes(Point positionXY)
         {
             var JointCoordinates = CalculateArmAnglesForPosition(positionXY);
+            _status = "inverse kinematic solution found";
+            _statusColor = System.Windows.Media.Brushes.DarkGreen;
             bool temp1 = false;
             bool temp2 = false;
             if (CheckIfDoubleIsNumber(JointCoordinates[0]) && CheckIfDoubleIsNumber(JointCoordinates[1]))
@@ -241,16 +264,21 @@ namespace ReverseKinematic
             }
             else
             {
-                MessageBox.Show("No solution found");
+                //MessageBox.Show("No solution found");
+                _status= "inverse kinematic no solution found";
+                _statusColor = System.Windows.Media.Brushes.DarkRed;
                 Alpha0 = JointCoordinates[0];
                 Alpha1 = JointCoordinates[1];
                 Alpha0bis = JointCoordinates[2];
                 Alpha1bis = JointCoordinates[3];
             }
-
+            
             //return new double[]{Alpha0, Alpha1, Alpha0bis, Alpha1bis};
+            OnPropertyChanged(nameof(Status));
+            OnPropertyChanged(nameof(StatusColor));
             return new bool[]{temp1, temp2};
-    }
+
+        }
 
         public static bool CheckIfDoubleIsNumber(double x)
         {
