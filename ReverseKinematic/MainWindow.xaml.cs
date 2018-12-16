@@ -72,17 +72,12 @@ namespace ReverseKinematic
 
         }
 
-        private void MainCanvas_OnLeftMouseDown(object sender, MouseButtonEventArgs e)
+        private void MainCanvas_OnRightMouseDown(object sender, MouseButtonEventArgs e)
         {
 
 
-            if (Keyboard.IsKeyDown(Key.LeftCtrl))
-            {
-                _mainViewModel.Scene.SelectObstacle(rescalePoint(e.GetPosition(MainViewbox)));
-                moveVector = rescalePoint(e.GetPosition(MainViewbox));
-            }
-            else
-            {
+      
+
                 position = rescalePoint(e.GetPosition(MainViewbox));
                 _mainViewModel.Scene.ObstaclesCollection.Remove(tempRectangle);
 
@@ -92,7 +87,7 @@ namespace ReverseKinematic
                 tempRectangle.From = new Point(position.X, position.Y);
                 tempRectangle.Size = new Point(0, 0);
                 _mainViewModel.Scene.ObstaclesCollection.Add(tempRectangle);
-            }
+            
 
         }
 
@@ -100,13 +95,21 @@ namespace ReverseKinematic
         {
             if (Keyboard.IsKeyDown(Key.LeftCtrl))
             {
-                //  _mainViewModel.Scene.SelectObstacle(rescalePoint(e.GetPosition(this)));
+                _mainViewModel.Scene.StartPosition = rescalePoint(e.GetPosition(MainViewbox));
+            }
+
+            else if (Keyboard.IsKeyDown(Key.LeftShift))
+            {
+                _mainViewModel.Scene.SelectObstacle(rescalePoint(e.GetPosition(MainViewbox)));
+                moveVector = rescalePoint(e.GetPosition(MainViewbox));
             }
             else
             {
-                _mainViewModel.Scene.ObstaclesCollection.Add(tempRectangle.Clone());
-                _mainViewModel.Scene.ObstaclesCollection.Remove(tempRectangle);
+                _mainViewModel.Scene.EndPosition = rescalePoint(e.GetPosition(MainViewbox));
             }
+
+
+
         }
 
 
@@ -150,15 +153,16 @@ namespace ReverseKinematic
         private void MainCanvas_OnMouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
 
-
             if (Keyboard.IsKeyDown(Key.LeftCtrl))
             {
-                _mainViewModel.Scene.StartPosition = rescalePoint(e.GetPosition(MainViewbox));
+                //  _mainViewModel.Scene.SelectObstacle(rescalePoint(e.GetPosition(this)));
             }
             else
             {
-                _mainViewModel.Scene.EndPosition = rescalePoint(e.GetPosition(MainViewbox));
+                _mainViewModel.Scene.ObstaclesCollection.Add(tempRectangle.Clone());
+                _mainViewModel.Scene.ObstaclesCollection.Remove(tempRectangle);
             }
+
         }
 
 

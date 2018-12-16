@@ -132,12 +132,12 @@
                 <Label Grid.Row="1" Grid.ColumnSpan="2" Content="alpha" HorizontalAlignment="Center"></Label>
 
                 </Grid>
-            <Label Grid.Row="7" Content="RMB    --place finish position"></Label>
-            <Label Grid.Row="8" Content="RMB + left CTRL    --place start position"></Label>
-            <Label Grid.Row="9" Content="LMB + Mouse move    --place obstacle"></Label>
-            <Label Grid.Row="10" Content="LMB + left ctrl    --select obstacle"></Label>
-            <Label Grid.Row="11" Content="LMB + left ctrl + Mouse move    --move selected obstacles"></Label>
-            <Label Grid.Row="12" Content="Delete    --remove selected obstacles" />
+            <Label Grid.Row="7" Content="LMB    --place finish position"></Label>
+            <Label Grid.Row="8" Content="LMB + left CTRL    --place start position"></Label>
+            <Label Grid.Row="9" Content="RMB + Mouse move    --place obstacle"></Label>
+            <Label Grid.Row="10" Content="LMB + left shift    --select obstacle"></Label>
+            <Label Grid.Row="11" Content="Mouse move + left ctrl    --move selected obstacles"></Label>
+            <Label Grid.Row="12" Content="Delete    --move selected obstacles"></Label>
 
             <!--<ItemsControl Grid.Row="3" Grid.ColumnSpan="10" ItemsSource="{Binding Scene.ConfigurationSpace}" >
                 <ItemsControl.ItemContainerStyle >
@@ -176,7 +176,7 @@
 
 
                     <!--<Canvas Name="RobotCanvas" Width="1000" Height="1000"  MouseDown="MainCanvas_OnLeftMouseDown" MouseUp="MainCanvas_OnLeftMouseUp" MouseMove="MainCanvas_OnMouseMove">-->
-                    <Canvas Background="AliceBlue" Name="RobotCanvas" Width="1000" Height="1000"  MouseLeftButtonDown="MainCanvas_OnLeftMouseDown" MouseLeftButtonUp="MainCanvas_OnLeftMouseUp" MouseMove="MainCanvas_OnMouseMove" MouseRightButtonUp="MainCanvas_OnMouseRightButtonUp">
+                    <Canvas Background="AliceBlue" Name="RobotCanvas" Width="1000" Height="1000" MouseRightButtonDown="MainCanvas_OnRightMouseDown" MouseLeftButtonUp="MainCanvas_OnLeftMouseUp" MouseMove="MainCanvas_OnMouseMove" MouseRightButtonUp="MainCanvas_OnMouseRightButtonUp">
 
 
                         <Ellipse Name ="WorkingAreaExternalBoundary"  Width="{Binding Scene.Robot1.ExternalBoundaryRadius.Z}" Height="{Binding Scene.Robot1.ExternalBoundaryRadius.Z}" Canvas.Left="{Binding Scene.Robot1.ExternalBoundaryRadius.X}"   Canvas.Top="{Binding Scene.Robot1.ExternalBoundaryRadius.Y}" Stroke="Chartreuse" StrokeThickness="3" >
@@ -237,7 +237,7 @@
                         <ItemsControl.ItemsPanel >
                             <ItemsPanelTemplate>
 
-                                <Canvas Name="MainCanvas"  Width="1000" Height="1000" MouseLeftButtonDown="MainCanvas_OnLeftMouseDown" MouseLeftButtonUp="MainCanvas_OnLeftMouseUp" MouseMove="MainCanvas_OnMouseMove" MouseRightButtonUp="MainCanvas_OnMouseRightButtonUp">
+                                <Canvas Name="MainCanvas"  Width="1000" Height="1000" MouseRightButtonDown="MainCanvas_OnRightMouseDown" MouseLeftButtonUp="MainCanvas_OnLeftMouseUp" MouseMove="MainCanvas_OnMouseMove" MouseRightButtonUp="MainCanvas_OnMouseRightButtonUp">
 
                                 </Canvas >
 
@@ -266,4 +266,3 @@
 
 
 </Window>
-
