@@ -34,7 +34,7 @@ namespace ReverseKinematic
         //    }
         //}
 
-        private double _l0=100;
+        private double _l0 = 100;
 
         public double L0
         {
@@ -52,7 +52,7 @@ namespace ReverseKinematic
                 OnPropertyChanged(nameof(EndPosition));
             }
         }
-        private double _l1=200;
+        private double _l1 = 250;
 
         public double L1
         {
@@ -306,7 +306,7 @@ namespace ReverseKinematic
 
             ObstaclesCollection = new ObservableCollection<RectangleObstacle>();
 
-            bitmapHelper.SetColor(120, 124, 128);
+            bitmapHelper.SetColor(240, 248, 255);
 
         }
 
@@ -398,7 +398,7 @@ namespace ReverseKinematic
             bitmapHelper.SetColor(240, 248, 255);
             Path.Clear();
 
-            if (double.IsNaN(Robot1.Alpha0) || double.IsNaN(Robot1.Alpha1) || double.IsNaN(Robot2.Alpha0) || double.IsNaN(Robot2.Alpha1))
+            if (double.IsNaN(Robot1.Alpha0) || double.IsNaN(Robot1.Alpha1) || double.IsNaN(Robot2.Alpha0) || double.IsNaN(Robot2.Alpha1) || CollisionCheck())
             {
                 OnPropertyChanged(nameof(ConfigurationSpaceBitmap));
                 return;
@@ -434,7 +434,7 @@ namespace ReverseKinematic
 
 
 
-            var maxDistance=arrayFloodFill(ConfigurationSpaceArray, startAlpha0, startAlpha1, endAlpha0, endAlpha1);
+            var maxDistance = arrayFloodFill(ConfigurationSpaceArray, startAlpha0, startAlpha1, endAlpha0, endAlpha1);
 
             if (maxDistance == 0) return;
             for (int i = 0; i < 360; i++)
@@ -545,7 +545,7 @@ namespace ReverseKinematic
         }
         public void GenerateConfigurationSpaceMap()
         {
-            CollisionCheck();
+            // CollisionCheck();
             GetObstaclesInConfigurationSpace();
         }
 
@@ -573,11 +573,11 @@ namespace ReverseKinematic
 
                 //if ((p[0] + 1) < ConfigurationSpaceArray.GetLength(0))
                 //{
-                    if ((ConfigurationSpaceArray[wrapAngle(p[0] + 1), wrapAngle(p[1])] == colorToChange) &&
-                        !toFill.Any(t => (t[0] == wrapAngle(p[0] + 1)) && (t[1] == wrapAngle(p[1]))))
-                    {
-                        toFill.Add(new int[3] {  wrapAngle(p[0] + 1), wrapAngle(p[1]), p[2] + 1 });
-                    }
+                if ((ConfigurationSpaceArray[wrapAngle(p[0] + 1), wrapAngle(p[1])] == colorToChange) &&
+                    !toFill.Any(t => (t[0] == wrapAngle(p[0] + 1)) && (t[1] == wrapAngle(p[1]))))
+                {
+                    toFill.Add(new int[3] { wrapAngle(p[0] + 1), wrapAngle(p[1]), p[2] + 1 });
+                }
                 //}
 
                 //if ((p[0] - 1) >= 0)
@@ -597,10 +597,10 @@ namespace ReverseKinematic
 
                 //if ((p[1] + 1) < ConfigurationSpaceArray.GetLength(1))
                 //{
-                if ((ConfigurationSpaceArray[wrapAngle(p[0]), wrapAngle(p[1]+1)] == colorToChange) &&
-                    !toFill.Any(t => (t[0] == wrapAngle(p[0] )) && (t[1] == wrapAngle(p[1]+1))))
+                if ((ConfigurationSpaceArray[wrapAngle(p[0]), wrapAngle(p[1] + 1)] == colorToChange) &&
+                    !toFill.Any(t => (t[0] == wrapAngle(p[0])) && (t[1] == wrapAngle(p[1] + 1))))
                 {
-                    toFill.Add(new int[3] { wrapAngle(p[0]), wrapAngle(p[1]+1), p[2] + 1 });
+                    toFill.Add(new int[3] { wrapAngle(p[0]), wrapAngle(p[1] + 1), p[2] + 1 });
                 }
 
                 //if ((ConfigurationSpaceArray[p[0], p[1] + 1] == colorToChange) &&
@@ -635,85 +635,91 @@ namespace ReverseKinematic
 
             return maxValue;
         }
-  //void arrayFloodFill(int[,] ConfigurationSpaceArray, int startPositionX, int startPositionY, int endPositionX, int endPositionY, int colorToChange = 0)
-  //      {
+        //void arrayFloodFill(int[,] ConfigurationSpaceArray, int startPositionX, int startPositionY, int endPositionX, int endPositionY, int colorToChange = 0)
+        //      {
 
 
-  //          if (ConfigurationSpaceArray[startPositionX, startPositionY] != colorToChange)
-  //          {
-  //              return;
-  //          }
+        //          if (ConfigurationSpaceArray[startPositionX, startPositionY] != colorToChange)
+        //          {
+        //              return;
+        //          }
 
-  //          var toFill = new List<int[]>();
+        //          var toFill = new List<int[]>();
 
-  //          toFill.Add(new int[3] { startPositionX, startPositionY, 1 });
+        //          toFill.Add(new int[3] { startPositionX, startPositionY, 1 });
 
-  //          while (toFill.Any())
-  //          {
-  //              var p = toFill[0];
-  //              toFill.RemoveAt(0);
+        //          while (toFill.Any())
+        //          {
+        //              var p = toFill[0];
+        //              toFill.RemoveAt(0);
 
-  //              ConfigurationSpaceArray[p[0], p[1]] = p[2];
-
-
-
-  //              if ((p[0] + 1) < ConfigurationSpaceArray.GetLength(0))
-  //              {
-  //                  if ((ConfigurationSpaceArray[p[0] + 1, p[1]] == colorToChange) &&
-  //                      !toFill.Any(t => (t[0] == (p[0] + 1)) && (t[1] == p[1])))
-  //                  {
-  //                      toFill.Add(new int[3] { p[0] + 1, p[1], p[2] + 1 });
-  //                  }
-  //              }
-
-  //              if ((p[0] - 1) >= 0)
-  //              {
-  //                  if ((ConfigurationSpaceArray[p[0] - 1, p[1]] == colorToChange) &&
-  //                      !toFill.Any(t => (t[0] == (p[0] - 1)) && (t[1] == p[1])))
-  //                  {
-  //                      toFill.Add(new int[3] { p[0] - 1, p[1], p[2] + 1 });
-  //                  }
-  //              }
-
-  //              if ((p[1] + 1) < ConfigurationSpaceArray.GetLength(1))
-  //              {
-  //                  if ((ConfigurationSpaceArray[p[0], p[1] + 1] == colorToChange) &&
-  //                      !toFill.Any(t => (t[0] == p[0]) && (t[1] == (p[1] + 1))))
-  //                  {
-  //                      toFill.Add(new int[3] { p[0], p[1] + 1, p[2] + 1 });
-  //                  }
-  //              }
-
-  //              if ((p[1] - 1) >= 0)
-  //              {
-
-  //                  if ((ConfigurationSpaceArray[p[0], p[1] - 1] == colorToChange) &&
-  //                                          !toFill.Any(t => (t[0] == p[0]) && (t[1] == (p[1] - 1))))
-  //                  {
-  //                      toFill.Add(new int[3] { p[0], p[1] - 1, p[2] + 1 });
-  //                  }
-  //              }
-
-  //              // i++;
-
-
-  //          }
+        //              ConfigurationSpaceArray[p[0], p[1]] = p[2];
 
 
 
+        //              if ((p[0] + 1) < ConfigurationSpaceArray.GetLength(0))
+        //              {
+        //                  if ((ConfigurationSpaceArray[p[0] + 1, p[1]] == colorToChange) &&
+        //                      !toFill.Any(t => (t[0] == (p[0] + 1)) && (t[1] == p[1])))
+        //                  {
+        //                      toFill.Add(new int[3] { p[0] + 1, p[1], p[2] + 1 });
+        //                  }
+        //              }
+
+        //              if ((p[0] - 1) >= 0)
+        //              {
+        //                  if ((ConfigurationSpaceArray[p[0] - 1, p[1]] == colorToChange) &&
+        //                      !toFill.Any(t => (t[0] == (p[0] - 1)) && (t[1] == p[1])))
+        //                  {
+        //                      toFill.Add(new int[3] { p[0] - 1, p[1], p[2] + 1 });
+        //                  }
+        //              }
+
+        //              if ((p[1] + 1) < ConfigurationSpaceArray.GetLength(1))
+        //              {
+        //                  if ((ConfigurationSpaceArray[p[0], p[1] + 1] == colorToChange) &&
+        //                      !toFill.Any(t => (t[0] == p[0]) && (t[1] == (p[1] + 1))))
+        //                  {
+        //                      toFill.Add(new int[3] { p[0], p[1] + 1, p[2] + 1 });
+        //                  }
+        //              }
+
+        //              if ((p[1] - 1) >= 0)
+        //              {
+
+        //                  if ((ConfigurationSpaceArray[p[0], p[1] - 1] == colorToChange) &&
+        //                                          !toFill.Any(t => (t[0] == p[0]) && (t[1] == (p[1] - 1))))
+        //                  {
+        //                      toFill.Add(new int[3] { p[0], p[1] - 1, p[2] + 1 });
+        //                  }
+        //              }
+
+        //              // i++;
 
 
-  //      }
+        //          }
+
+
+
+
+
+        //      }
 
 
         //public double[] CalculateArmAnglesForPosition(Point position)
         //{
 
         //}
-        public void CollisionCheck()
-        {
 
-            if (_showFirstPermission)
+        public bool CollisionCheck()
+        {
+            bool collisionDetected = false;
+            //bool collisionDetectedStart1 = false;
+            //bool collisionDetectedStart2 = false;
+            //bool collisionDetectedEnd1 = false;
+            //bool collisionDetectedEnd2 = false;
+
+            if (_showFirst)
             {
                 foreach (var item in ObstaclesCollection)
                 {
@@ -724,6 +730,7 @@ namespace ReverseKinematic
                         //_showFirstPermission = false;
                         // OnPropertyChanged(nameof(ShowFirst));
                         MessageBox.Show("Solution 1 obstacle START");
+                        collisionDetected = true;
                         break;
                     };
                 }
@@ -741,13 +748,14 @@ namespace ReverseKinematic
                         //_showFirstPermission = false;
                         OnPropertyChanged(nameof(ShowSecond));
                         MessageBox.Show("Solution 2 obstacle START");
+                        collisionDetected = true;
                         break;
                     }
                 }
             }
 
 
-            if (_showFirstPermission)
+            if (_showFirstEnd)
             {
                 foreach (var item in ObstaclesCollection)
                 {
@@ -758,6 +766,7 @@ namespace ReverseKinematic
                         //_showFirstPermission = false;
                         // OnPropertyChanged(nameof(ShowFirst));
                         MessageBox.Show("Solution 1 obstacle END");
+                        collisionDetected = true;
                         break;
                     };
                 }
@@ -775,10 +784,12 @@ namespace ReverseKinematic
                         //_showFirstPermission = false;
                         OnPropertyChanged(nameof(ShowSecond));
                         MessageBox.Show("Solution 2 obstacle END");
+                        collisionDetected = true;
                         break;
                     }
                 }
             }
+            return collisionDetected;
         }
 
         public void RefreshRobots()
@@ -811,7 +822,7 @@ namespace ReverseKinematic
         public void StartSimulation()
         {
             TurnOnAnimation();
-            CollisionCheck();
+            //  CollisionCheck();
             GetObstaclesInConfigurationSpace();
             SavedRobotCopy = Robot1.Clone();
             timer = new DispatcherTimer(DispatcherPriority.Render);
@@ -819,7 +830,7 @@ namespace ReverseKinematic
 
             if (Path.Any())
             {
-                
+
                 timer.Interval = TimeSpan.FromMilliseconds(1000 * SimulationTime / Path.Count);
                 timer.Tick += TimerOnTick;
                 timer.Start();

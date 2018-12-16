@@ -62,6 +62,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <Grid  Grid.Row="0" Grid.ColumnSpan="10">
@@ -136,6 +137,7 @@
             <Label Grid.Row="9" Content="LMB + Mouse move    --place obstacle"></Label>
             <Label Grid.Row="10" Content="LMB + left ctrl    --select obstacle"></Label>
             <Label Grid.Row="11" Content="LMB + left ctrl + Mouse move    --move selected obstacles"></Label>
+            <Label Grid.Row="12" Content="Delete    --remove selected obstacles" />
 
             <!--<ItemsControl Grid.Row="3" Grid.ColumnSpan="10" ItemsSource="{Binding Scene.ConfigurationSpace}" >
                 <ItemsControl.ItemContainerStyle >
@@ -264,3 +266,4 @@
 
 
 </Window>
+
