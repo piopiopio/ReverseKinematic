@@ -47,8 +47,8 @@ namespace ReverseKinematic
                 var tempRobot2 = Robot2.Clone();
                 Robot1.L0 = _l0;
                 Robot2.L0 = _l0;
-                StartPosition = Robot1.Point2;
-                EndPosition = Robot2.Point2;
+                StartPosition = tempRobot1.Point2;
+                EndPosition = tempRobot2.Point2;
                 //_robot1 = new Robot(_l0, _l1, _startPosition);
                 //_robot2 = new Robot(_l0, _l1, _endPosition);
 
@@ -60,7 +60,7 @@ namespace ReverseKinematic
                 {
                     Robot1.Alpha0 = tempRobot1.Alpha0;
                     Robot1.Alpha1 = tempRobot1.Alpha1;
-                   
+                    StartPosition = Robot1.Point2;
                     //  Robot1.Refresh();
                 }
 
@@ -68,7 +68,7 @@ namespace ReverseKinematic
                 {
                     Robot2.Alpha0 = tempRobot2.Alpha0;
                     Robot2.Alpha1 = tempRobot2.Alpha1;
-                  
+                    EndPosition = Robot2.Point2;
                     //    Robot2.Refresh();
                 }
             }
@@ -85,8 +85,8 @@ namespace ReverseKinematic
                 var tempRobot2 = Robot2.Clone();
                 Robot1.L1 = _l1;
                 Robot2.L1 = _l1;
-                StartPosition = Robot1.Point2;
-                EndPosition = Robot2.Point2;
+                StartPosition = tempRobot1.Point2;
+                EndPosition = tempRobot2.Point2;
                 //_robot1 = new Robot(_l0, _l1, _startPosition);
                 //_robot2 = new Robot(_l0, _l1, _endPosition);
 
@@ -99,14 +99,16 @@ namespace ReverseKinematic
                 {
                     Robot1.Alpha0 = tempRobot1.Alpha0;
                     Robot1.Alpha1 = tempRobot1.Alpha1;
-   //Robot1.Refresh();
+                    StartPosition = Robot1.Point2;
+                    //Robot1.Refresh();
                 }
 
                 if (double.IsNaN(Robot2.Alpha0) || double.IsNaN(Robot2.Alpha1))
                 {
                     Robot2.Alpha0 = tempRobot2.Alpha0;
                     Robot2.Alpha1 = tempRobot2.Alpha1;
-                    
+                    EndPosition = Robot2.Point2;
+
                     //Robot2.Refresh();
                 }
             }

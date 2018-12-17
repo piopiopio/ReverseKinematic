@@ -45,7 +45,7 @@ namespace ReverseKinematic
             _mainViewModel.Scene.TurnOnAnimationModeReverseKinematic += TurnOnAnimMode;
             _mainViewModel.Scene.TurnOffAnimationModeReverseKinematic += TurnOffAnimMode;
 
-       
+
         }
 
 
@@ -78,23 +78,22 @@ namespace ReverseKinematic
         {
 
 
-      
+            position = rescalePoint(e.GetPosition(MainViewbox));
+            _mainViewModel.Scene.ObstaclesCollection.Remove(tempRectangle);
 
-                position = rescalePoint(e.GetPosition(MainViewbox));
-                _mainViewModel.Scene.ObstaclesCollection.Remove(tempRectangle);
+            ////tempRectangle.Fill=new SolidColorBrush(System.Windows.Media.Colors.Black);  
+            ////Canvas.SetTop(tempRectangle, position.Y);
+            ////Canvas.SetLeft(tempRectangle, position.X);
+            tempRectangle.From = new Point(position.X, position.Y);
+            tempRectangle.Size = new Point(0, 0);
+            _mainViewModel.Scene.ObstaclesCollection.Add(tempRectangle);
 
-                ////tempRectangle.Fill=new SolidColorBrush(System.Windows.Media.Colors.Black);  
-                ////Canvas.SetTop(tempRectangle, position.Y);
-                ////Canvas.SetLeft(tempRectangle, position.X);
-                tempRectangle.From = new Point(position.X, position.Y);
-                tempRectangle.Size = new Point(0, 0);
-                _mainViewModel.Scene.ObstaclesCollection.Add(tempRectangle);
-            
 
         }
 
         private void MainCanvas_OnLeftMouseUp(object sender, MouseButtonEventArgs e)
         {
+
             if (Keyboard.IsKeyDown(Key.LeftShift))
             {
                 _mainViewModel.Scene.StartPosition = rescalePoint(e.GetPosition(MainViewbox));
@@ -135,7 +134,7 @@ namespace ReverseKinematic
                 var Height = newPosition.Y - position.Y;
                 if (Width < 0) tempRectangle.From = new Point(newPosition.X, tempRectangle.From.Y);
                 if (Height < 0) tempRectangle.From = new Point(tempRectangle.From.X, newPosition.Y);
-                tempRectangle.Size = new Point(Math.Max(Math.Abs(Width),10), Math.Max(Math.Abs(Height),10));
+                tempRectangle.Size = new Point(Math.Max(Math.Abs(Width), 10), Math.Max(Math.Abs(Height), 10));
             }
             moveVector = currentPosition;
         }
@@ -176,10 +175,10 @@ namespace ReverseKinematic
 
         private void ClearScene(object sender, RoutedEventArgs e)
         {
-            _mainViewModel.Scene.ObstaclesCollection.Clear();        
+            _mainViewModel.Scene.ObstaclesCollection.Clear();
         }
 
-        private void OnKeyDown(object sender, KeyEventArgs e)
+        private void OnPrievewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Delete)
             {
@@ -197,8 +196,8 @@ namespace ReverseKinematic
 
 
         private void StartAnimation_OnClick(object sender, RoutedEventArgs e)
-        { 
-           // AlertPopup.IsOpen = true;
+        {
+            // AlertPopup.IsOpen = true;
             TurnOffAnimtionMode(false);
             _mainViewModel.Scene.StartSimulation();
 
