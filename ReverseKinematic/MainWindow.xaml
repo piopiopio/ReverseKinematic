@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ReverseKinematic" 
         xmlns:system="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="MainWindow" Name="MainWindow1" WindowState="Maximized" SizeChanged="MainWindow_OnSizeChanged"  PreviewKeyDown="OnPrievewKeyDown" MinWidth="900" d:DesignHeight="917.5">
+        Title="Inverse kinematics" Name="MainWindow1" WindowState="Maximized" SizeChanged="MainWindow_OnSizeChanged"  PreviewKeyDown="OnPrievewKeyDown" MinWidth="900" d:DesignHeight="917.5">
 
     <Window.Resources>
         <local:BaseConverter x:Key="BaseConverter"/>
